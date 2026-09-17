@@ -1,0 +1,1192 @@
+{
+  "package": "agentspec-rdd",
+  "version": "0.2.0",
+  "target": "claude",
+  "installedAt": "2026-09-17T03:08:26.921Z",
+  "files": [
+    {
+      "path": ".claude/agents/_template.md",
+      "sha256": "d7b19b34080e3631"
+    },
+    {
+      "path": ".claude/agents/architect/data-platform-engineer.md",
+      "sha256": "7ae3aa83fcdfb520"
+    },
+    {
+      "path": ".claude/agents/architect/genai-architect.md",
+      "sha256": "c56c1669b7f0f4ba"
+    },
+    {
+      "path": ".claude/agents/architect/kb-architect.md",
+      "sha256": "41d9a98a005c59fe"
+    },
+    {
+      "path": ".claude/agents/architect/lakehouse-architect.md",
+      "sha256": "fa82b90efbc37f18"
+    },
+    {
+      "path": ".claude/agents/architect/medallion-architect.md",
+      "sha256": "c8ae8748a6f907b9"
+    },
+    {
+      "path": ".claude/agents/architect/pipeline-architect.md",
+      "sha256": "8fc74e3535a3803b"
+    },
+    {
+      "path": ".claude/agents/architect/schema-designer.md",
+      "sha256": "c538f5ff89e5cf71"
+    },
+    {
+      "path": ".claude/agents/architect/the-planner.md",
+      "sha256": "79666ed7c2fa715e"
+    },
+    {
+      "path": ".claude/agents/cloud/ci-cd-specialist.md",
+      "sha256": "ab4cc9bb6f82462f"
+    },
+    {
+      "path": ".claude/agents/cloud/supabase-specialist.md",
+      "sha256": "32663c1f1331b382"
+    },
+    {
+      "path": ".claude/agents/data-engineering/ai-data-engineer.md",
+      "sha256": "a760a3f78ed53987"
+    },
+    {
+      "path": ".claude/agents/data-engineering/airflow-specialist.md",
+      "sha256": "c29bb6aa311caa46"
+    },
+    {
+      "path": ".claude/agents/data-engineering/dbt-specialist.md",
+      "sha256": "f034b047ab2072ec"
+    },
+    {
+      "path": ".claude/agents/data-engineering/lakeflow-architect.md",
+      "sha256": "9a4c22b38d03c32b"
+    },
+    {
+      "path": ".claude/agents/data-engineering/lakeflow-expert.md",
+      "sha256": "fffb7d4271377d82"
+    },
+    {
+      "path": ".claude/agents/data-engineering/lakeflow-pipeline-builder.md",
+      "sha256": "e1ef06ec5000bd91"
+    },
+    {
+      "path": ".claude/agents/data-engineering/lakeflow-specialist.md",
+      "sha256": "9caa1e920dad8cec"
+    },
+    {
+      "path": ".claude/agents/data-engineering/qdrant-specialist.md",
+      "sha256": "d27cf35d0adfb971"
+    },
+    {
+      "path": ".claude/agents/data-engineering/spark-engineer.md",
+      "sha256": "f69cb025d790d36b"
+    },
+    {
+      "path": ".claude/agents/data-engineering/spark-performance-analyzer.md",
+      "sha256": "9b71ef24564cdbc3"
+    },
+    {
+      "path": ".claude/agents/data-engineering/spark-specialist.md",
+      "sha256": "b8a5d9232861b27d"
+    },
+    {
+      "path": ".claude/agents/data-engineering/spark-troubleshooter.md",
+      "sha256": "3cad8245482cd421"
+    },
+    {
+      "path": ".claude/agents/data-engineering/sql-optimizer.md",
+      "sha256": "ab6f5944216ac300"
+    },
+    {
+      "path": ".claude/agents/dev/codebase-explorer.md",
+      "sha256": "6977bbe73657be19"
+    },
+    {
+      "path": ".claude/agents/dev/meeting-analyst.md",
+      "sha256": "d87671f175a4d7c0"
+    },
+    {
+      "path": ".claude/agents/dev/prompt-crafter.md",
+      "sha256": "7b02c129a8094aa7"
+    },
+    {
+      "path": ".claude/agents/dev/shell-script-specialist.md",
+      "sha256": "82f3b1348c37d82d"
+    },
+    {
+      "path": ".claude/agents/python/ai-prompt-specialist.md",
+      "sha256": "c292e1872819f4da"
+    },
+    {
+      "path": ".claude/agents/python/code-cleaner.md",
+      "sha256": "2bbdb4a62e75121e"
+    },
+    {
+      "path": ".claude/agents/python/code-documenter.md",
+      "sha256": "5c3937f4e4a8a15f"
+    },
+    {
+      "path": ".claude/agents/python/code-reviewer.md",
+      "sha256": "e06c6a864f8c414f"
+    },
+    {
+      "path": ".claude/agents/python/llm-specialist.md",
+      "sha256": "fb8f00e5f919e2ae"
+    },
+    {
+      "path": ".claude/agents/python/python-developer.md",
+      "sha256": "a45491ada1509c51"
+    },
+    {
+      "path": ".claude/agents/README.md",
+      "sha256": "c1edab88259c6562"
+    },
+    {
+      "path": ".claude/agents/test/data-contracts-engineer.md",
+      "sha256": "0abc74fc0b1f801b"
+    },
+    {
+      "path": ".claude/agents/test/data-quality-analyst.md",
+      "sha256": "8e974ed3d9bf194c"
+    },
+    {
+      "path": ".claude/agents/test/test-generator.md",
+      "sha256": "36fe9af29e3800e4"
+    },
+    {
+      "path": ".claude/agents/workflow/brainstorm-agent.md",
+      "sha256": "d3f1574686ab97a1"
+    },
+    {
+      "path": ".claude/agents/workflow/build-agent.md",
+      "sha256": "fdefb68923ecca8f"
+    },
+    {
+      "path": ".claude/agents/workflow/define-agent.md",
+      "sha256": "e03750020438d7da"
+    },
+    {
+      "path": ".claude/agents/workflow/design-agent.md",
+      "sha256": "dce1471675a9173c"
+    },
+    {
+      "path": ".claude/agents/workflow/iterate-agent.md",
+      "sha256": "375f4fe6b9b537a2"
+    },
+    {
+      "path": ".claude/agents/workflow/ship-agent.md",
+      "sha256": "f77f37185e0b268c"
+    },
+    {
+      "path": ".claude/commands/core/meeting.md",
+      "sha256": "b213a727419eadeb"
+    },
+    {
+      "path": ".claude/commands/core/memory.md",
+      "sha256": "6e892f1395819dda"
+    },
+    {
+      "path": ".claude/commands/core/readme-maker.md",
+      "sha256": "5d31ba08b540c997"
+    },
+    {
+      "path": ".claude/commands/core/sync-context.md",
+      "sha256": "aa95acf12334e50e"
+    },
+    {
+      "path": ".claude/commands/data-engineering/ai-pipeline.md",
+      "sha256": "873ae006d0294870"
+    },
+    {
+      "path": ".claude/commands/data-engineering/data-contract.md",
+      "sha256": "49979cd979e49a21"
+    },
+    {
+      "path": ".claude/commands/data-engineering/data-quality.md",
+      "sha256": "be50eaed58b408d3"
+    },
+    {
+      "path": ".claude/commands/data-engineering/lakehouse.md",
+      "sha256": "2856482f0d7486d7"
+    },
+    {
+      "path": ".claude/commands/data-engineering/migrate.md",
+      "sha256": "5a0e315d90c861fc"
+    },
+    {
+      "path": ".claude/commands/data-engineering/pipeline.md",
+      "sha256": "7facd84fca47b5a0"
+    },
+    {
+      "path": ".claude/commands/data-engineering/schema.md",
+      "sha256": "fa58092ce7c731a6"
+    },
+    {
+      "path": ".claude/commands/data-engineering/sql-review.md",
+      "sha256": "cb9b2a4bce3c97e0"
+    },
+    {
+      "path": ".claude/commands/knowledge/create-kb.md",
+      "sha256": "c22c74157b17bcb7"
+    },
+    {
+      "path": ".claude/commands/review/review.md",
+      "sha256": "9237176a0bb8caa4"
+    },
+    {
+      "path": ".claude/commands/workflow/brainstorm.md",
+      "sha256": "c506018bb51395d9"
+    },
+    {
+      "path": ".claude/commands/workflow/build.md",
+      "sha256": "613a63c68c653801"
+    },
+    {
+      "path": ".claude/commands/workflow/create-pr.md",
+      "sha256": "2a2199751dd202c5"
+    },
+    {
+      "path": ".claude/commands/workflow/define.md",
+      "sha256": "18435769dbacf88e"
+    },
+    {
+      "path": ".claude/commands/workflow/design.md",
+      "sha256": "fa4bebdb8ad4b27f"
+    },
+    {
+      "path": ".claude/commands/workflow/iterate.md",
+      "sha256": "4ab3547dad9bf5d3"
+    },
+    {
+      "path": ".claude/commands/workflow/ship.md",
+      "sha256": "71eb972e54f9b357"
+    },
+    {
+      "path": ".claude/kb/_index.yaml",
+      "sha256": "07133935a5635fd5"
+    },
+    {
+      "path": ".claude/kb/_templates/concept.md.template",
+      "sha256": "8ac512292fdb02c8"
+    },
+    {
+      "path": ".claude/kb/_templates/domain-manifest.yaml.template",
+      "sha256": "9e741b6811f48f8d"
+    },
+    {
+      "path": ".claude/kb/_templates/index.md.template",
+      "sha256": "5f21a520f465e89b"
+    },
+    {
+      "path": ".claude/kb/_templates/pattern.md.template",
+      "sha256": "ef64cb2e81c15ebd"
+    },
+    {
+      "path": ".claude/kb/_templates/quick-reference.md.template",
+      "sha256": "c3a10c95fd4eb592"
+    },
+    {
+      "path": ".claude/kb/_templates/spec.yaml.template",
+      "sha256": "47d4273b8835e521"
+    },
+    {
+      "path": ".claude/kb/_templates/test-case.json.template",
+      "sha256": "244822890e40f526"
+    },
+    {
+      "path": ".claude/kb/ai-data-engineering/concepts/embedding-pipelines.md",
+      "sha256": "d8428a5cd07b7786"
+    },
+    {
+      "path": ".claude/kb/ai-data-engineering/concepts/feature-stores.md",
+      "sha256": "0539ec2cec281d70"
+    },
+    {
+      "path": ".claude/kb/ai-data-engineering/concepts/llmops-patterns.md",
+      "sha256": "3ce63f3e322dcc00"
+    },
+    {
+      "path": ".claude/kb/ai-data-engineering/concepts/rag-pipelines.md",
+      "sha256": "c20596fc9c004dad"
+    },
+    {
+      "path": ".claude/kb/ai-data-engineering/concepts/vector-databases.md",
+      "sha256": "c68ae82628ebf1cc"
+    },
+    {
+      "path": ".claude/kb/ai-data-engineering/index.md",
+      "sha256": "561aeb7256cb6134"
+    },
+    {
+      "path": ".claude/kb/ai-data-engineering/patterns/feature-engineering.md",
+      "sha256": "5f2a516266e5960d"
+    },
+    {
+      "path": ".claude/kb/ai-data-engineering/patterns/rag-pipeline-implementation.md",
+      "sha256": "f31b329dd67c8e45"
+    },
+    {
+      "path": ".claude/kb/ai-data-engineering/patterns/text-to-sql.md",
+      "sha256": "c1990341db6e6858"
+    },
+    {
+      "path": ".claude/kb/ai-data-engineering/patterns/training-data-pipelines.md",
+      "sha256": "375b2d01a3e3c81d"
+    },
+    {
+      "path": ".claude/kb/ai-data-engineering/patterns/vector-db-operations.md",
+      "sha256": "1b49a42787669aa0"
+    },
+    {
+      "path": ".claude/kb/ai-data-engineering/quick-reference.md",
+      "sha256": "0e270fc70bb42960"
+    },
+    {
+      "path": ".claude/kb/airflow/concepts/dag-design.md",
+      "sha256": "de726c68aa371e61"
+    },
+    {
+      "path": ".claude/kb/airflow/concepts/operators.md",
+      "sha256": "41c4cecf8ef6d3dc"
+    },
+    {
+      "path": ".claude/kb/airflow/concepts/orchestrator-comparison.md",
+      "sha256": "a0559e13f570c151"
+    },
+    {
+      "path": ".claude/kb/airflow/concepts/task-dependencies.md",
+      "sha256": "cbb8eaea9d553cb2"
+    },
+    {
+      "path": ".claude/kb/airflow/index.md",
+      "sha256": "0f4f411b71324850"
+    },
+    {
+      "path": ".claude/kb/airflow/patterns/dag-factory.md",
+      "sha256": "aeb9cdfd36ed1999"
+    },
+    {
+      "path": ".claude/kb/airflow/patterns/dynamic-task-mapping.md",
+      "sha256": "bc8a01f072e40b29"
+    },
+    {
+      "path": ".claude/kb/airflow/patterns/error-handling.md",
+      "sha256": "e876e1bd6ad90d7c"
+    },
+    {
+      "path": ".claude/kb/airflow/patterns/sensors-triggers.md",
+      "sha256": "d4c5e25a10f0f896"
+    },
+    {
+      "path": ".claude/kb/airflow/quick-reference.md",
+      "sha256": "a3787151ae2a7798"
+    },
+    {
+      "path": ".claude/kb/cloud-platforms/concepts/bigquery-ai.md",
+      "sha256": "77da8cb2608fcddb"
+    },
+    {
+      "path": ".claude/kb/cloud-platforms/concepts/cross-platform-patterns.md",
+      "sha256": "b6f545b279d59574"
+    },
+    {
+      "path": ".claude/kb/cloud-platforms/concepts/databricks-lakeflow.md",
+      "sha256": "97a1718ae672fd51"
+    },
+    {
+      "path": ".claude/kb/cloud-platforms/concepts/snowflake-cortex.md",
+      "sha256": "d94bb0bc67f4654a"
+    },
+    {
+      "path": ".claude/kb/cloud-platforms/index.md",
+      "sha256": "37ee3156c6faf7c1"
+    },
+    {
+      "path": ".claude/kb/cloud-platforms/patterns/bigquery-patterns.md",
+      "sha256": "f01f39ff52440ebc"
+    },
+    {
+      "path": ".claude/kb/cloud-platforms/patterns/cost-optimization.md",
+      "sha256": "41a4a793eb38a9b8"
+    },
+    {
+      "path": ".claude/kb/cloud-platforms/patterns/databricks-patterns.md",
+      "sha256": "d6de8edd848720a9"
+    },
+    {
+      "path": ".claude/kb/cloud-platforms/patterns/snowflake-patterns.md",
+      "sha256": "8b78082a4243c6d4"
+    },
+    {
+      "path": ".claude/kb/cloud-platforms/quick-reference.md",
+      "sha256": "e80252bb0440238d"
+    },
+    {
+      "path": ".claude/kb/data-modeling/concepts/dimensional-modeling.md",
+      "sha256": "bc382b1ddf366b17"
+    },
+    {
+      "path": ".claude/kb/data-modeling/concepts/normalization.md",
+      "sha256": "af01f77478546d38"
+    },
+    {
+      "path": ".claude/kb/data-modeling/concepts/scd-types.md",
+      "sha256": "4effe58f3f99db30"
+    },
+    {
+      "path": ".claude/kb/data-modeling/concepts/schema-evolution.md",
+      "sha256": "db972cf25d642fad"
+    },
+    {
+      "path": ".claude/kb/data-modeling/index.md",
+      "sha256": "2eaa4ac43e85e59c"
+    },
+    {
+      "path": ".claude/kb/data-modeling/patterns/data-vault.md",
+      "sha256": "8d4e872f674d6f1d"
+    },
+    {
+      "path": ".claude/kb/data-modeling/patterns/one-big-table.md",
+      "sha256": "d9ead2a7cd61f83b"
+    },
+    {
+      "path": ".claude/kb/data-modeling/patterns/schema-migration.md",
+      "sha256": "b3fae3aa3fc0ec72"
+    },
+    {
+      "path": ".claude/kb/data-modeling/patterns/star-schema.md",
+      "sha256": "c8a85dafd3d19438"
+    },
+    {
+      "path": ".claude/kb/data-modeling/quick-reference.md",
+      "sha256": "bea60ebf29fae22a"
+    },
+    {
+      "path": ".claude/kb/data-quality/concepts/data-contracts.md",
+      "sha256": "c6596373f3ea9202"
+    },
+    {
+      "path": ".claude/kb/data-quality/concepts/observability.md",
+      "sha256": "92084d64d726ad14"
+    },
+    {
+      "path": ".claude/kb/data-quality/concepts/quality-dimensions.md",
+      "sha256": "27b3189a5e1e48d1"
+    },
+    {
+      "path": ".claude/kb/data-quality/concepts/soda-core.md",
+      "sha256": "1fb71b168491f5d0"
+    },
+    {
+      "path": ".claude/kb/data-quality/index.md",
+      "sha256": "c7316e0a7c41bff3"
+    },
+    {
+      "path": ".claude/kb/data-quality/patterns/data-contract-authoring.md",
+      "sha256": "034a2526219dcede"
+    },
+    {
+      "path": ".claude/kb/data-quality/patterns/dbt-testing.md",
+      "sha256": "6b280db6edcd5a98"
+    },
+    {
+      "path": ".claude/kb/data-quality/patterns/great-expectations.md",
+      "sha256": "06f175676ca20295"
+    },
+    {
+      "path": ".claude/kb/data-quality/patterns/schema-validation.md",
+      "sha256": "0c084a1211c1ecbc"
+    },
+    {
+      "path": ".claude/kb/data-quality/quick-reference.md",
+      "sha256": "aeb3c7e2e768ecc1"
+    },
+    {
+      "path": ".claude/kb/dbt/concepts/fusion-engine.md",
+      "sha256": "4780e3f2ca4db4f0"
+    },
+    {
+      "path": ".claude/kb/dbt/concepts/incremental-strategies.md",
+      "sha256": "1fb6ccfe63600c0f"
+    },
+    {
+      "path": ".claude/kb/dbt/concepts/mesh-architecture.md",
+      "sha256": "08f7ea5c5d811dd2"
+    },
+    {
+      "path": ".claude/kb/dbt/concepts/model-types.md",
+      "sha256": "7cc9424e5ba09657"
+    },
+    {
+      "path": ".claude/kb/dbt/concepts/testing-framework.md",
+      "sha256": "aab5eef570790bb0"
+    },
+    {
+      "path": ".claude/kb/dbt/index.md",
+      "sha256": "61614d509aa456db"
+    },
+    {
+      "path": ".claude/kb/dbt/patterns/generic-tests.md",
+      "sha256": "56775e21bca45aae"
+    },
+    {
+      "path": ".claude/kb/dbt/patterns/incremental-model.md",
+      "sha256": "82f18b2c2c9b62ba"
+    },
+    {
+      "path": ".claude/kb/dbt/patterns/macro-patterns.md",
+      "sha256": "ab7caff34e234137"
+    },
+    {
+      "path": ".claude/kb/dbt/patterns/semantic-layer.md",
+      "sha256": "91c2d69b2e627b2d"
+    },
+    {
+      "path": ".claude/kb/dbt/patterns/snapshot-scd2.md",
+      "sha256": "34c3da1d212b261e"
+    },
+    {
+      "path": ".claude/kb/dbt/quick-reference.md",
+      "sha256": "2d867041b0c0cf95"
+    },
+    {
+      "path": ".claude/kb/genai/concepts/guardrails.md",
+      "sha256": "1876ab035d044efa"
+    },
+    {
+      "path": ".claude/kb/genai/concepts/multi-agent-systems.md",
+      "sha256": "c9c8ce2e59584287"
+    },
+    {
+      "path": ".claude/kb/genai/concepts/rag-architecture.md",
+      "sha256": "7a280aad0f8161ee"
+    },
+    {
+      "path": ".claude/kb/genai/concepts/state-machines.md",
+      "sha256": "23b8af2d75b32e5e"
+    },
+    {
+      "path": ".claude/kb/genai/concepts/tool-calling.md",
+      "sha256": "28dd5dbfad870a75"
+    },
+    {
+      "path": ".claude/kb/genai/index.md",
+      "sha256": "3a643f7ec5548312"
+    },
+    {
+      "path": ".claude/kb/genai/patterns/agentic-workflow.md",
+      "sha256": "feefa81ce9a8b6aa"
+    },
+    {
+      "path": ".claude/kb/genai/patterns/chatbot-architecture.md",
+      "sha256": "544e6b2d3651c81c"
+    },
+    {
+      "path": ".claude/kb/genai/patterns/evaluation-framework.md",
+      "sha256": "530c39c462d40038"
+    },
+    {
+      "path": ".claude/kb/genai/patterns/rag-pipeline.md",
+      "sha256": "1b17b47f6d9e1de2"
+    },
+    {
+      "path": ".claude/kb/genai/quick-reference.md",
+      "sha256": "0ee58128c9003c69"
+    },
+    {
+      "path": ".claude/kb/genai/specs/genai-patterns.yaml",
+      "sha256": "485b265656f0cc2a"
+    },
+    {
+      "path": ".claude/kb/lakeflow/concepts/cdc-fundamentals.md",
+      "sha256": "11cfb5e716d2009b"
+    },
+    {
+      "path": ".claude/kb/lakeflow/concepts/core-concepts.md",
+      "sha256": "6a90493eb8a260cc"
+    },
+    {
+      "path": ".claude/kb/lakeflow/concepts/deployment-model.md",
+      "sha256": "e1e6ed242ac6c9e6"
+    },
+    {
+      "path": ".claude/kb/lakeflow/concepts/expectations-model.md",
+      "sha256": "daa7aab317f4c278"
+    },
+    {
+      "path": ".claude/kb/lakeflow/concepts/getting-started.md",
+      "sha256": "594e4a603493d6c8"
+    },
+    {
+      "path": ".claude/kb/lakeflow/index.md",
+      "sha256": "7535a997aac25984"
+    },
+    {
+      "path": ".claude/kb/lakeflow/patterns/bronze-ingestion.md",
+      "sha256": "6dda9b910c94636f"
+    },
+    {
+      "path": ".claude/kb/lakeflow/patterns/cdc-apply-changes.md",
+      "sha256": "7be0f147518f4e5a"
+    },
+    {
+      "path": ".claude/kb/lakeflow/patterns/cdc-example.md",
+      "sha256": "e05f5c2ad4cc9832"
+    },
+    {
+      "path": ".claude/kb/lakeflow/patterns/dabs-deployment.md",
+      "sha256": "5caddf32098d09fc"
+    },
+    {
+      "path": ".claude/kb/lakeflow/patterns/expectations-advanced.md",
+      "sha256": "e38cd589ec4a1edb"
+    },
+    {
+      "path": ".claude/kb/lakeflow/patterns/expectations.md",
+      "sha256": "204f259175ba3cdd"
+    },
+    {
+      "path": ".claude/kb/lakeflow/patterns/gold-aggregation.md",
+      "sha256": "32e7d68eee317978"
+    },
+    {
+      "path": ".claude/kb/lakeflow/patterns/python-decorators.md",
+      "sha256": "9bfc470ee1a0374a"
+    },
+    {
+      "path": ".claude/kb/lakeflow/patterns/python-streaming.md",
+      "sha256": "c1ac8bb8565e43dd"
+    },
+    {
+      "path": ".claude/kb/lakeflow/patterns/silver-cleansing.md",
+      "sha256": "97a9c471fdfaefc2"
+    },
+    {
+      "path": ".claude/kb/lakeflow/patterns/sql-streaming.md",
+      "sha256": "1289642ba546d1a2"
+    },
+    {
+      "path": ".claude/kb/lakeflow/patterns/sql-tables.md",
+      "sha256": "c99af54eb9952ed5"
+    },
+    {
+      "path": ".claude/kb/lakeflow/quick-reference.md",
+      "sha256": "373ed41aaac19460"
+    },
+    {
+      "path": ".claude/kb/lakeflow/reference/limitations.md",
+      "sha256": "727973e236e5ac19"
+    },
+    {
+      "path": ".claude/kb/lakeflow/reference/materialized-views.md",
+      "sha256": "13a5955a91bfc4d7"
+    },
+    {
+      "path": ".claude/kb/lakeflow/reference/parameters.md",
+      "sha256": "d769e582b0644363"
+    },
+    {
+      "path": ".claude/kb/lakeflow/reference/pipeline-configuration.md",
+      "sha256": "fd5f2d2d9884cf14"
+    },
+    {
+      "path": ".claude/kb/lakeflow/reference/serverless-pipelines.md",
+      "sha256": "de69908c78b4f9ae"
+    },
+    {
+      "path": ".claude/kb/lakeflow/reference/stateful-processing.md",
+      "sha256": "b9e2c766b26a74cc"
+    },
+    {
+      "path": ".claude/kb/lakeflow/reference/unity-catalog.md",
+      "sha256": "86c0c9db103c5d22"
+    },
+    {
+      "path": ".claude/kb/lakehouse/concepts/catalog-wars.md",
+      "sha256": "3f16720b6b8b345d"
+    },
+    {
+      "path": ".claude/kb/lakehouse/concepts/delta-lake.md",
+      "sha256": "d4140033dbb7699c"
+    },
+    {
+      "path": ".claude/kb/lakehouse/concepts/ducklake.md",
+      "sha256": "054cf12a8f565178"
+    },
+    {
+      "path": ".claude/kb/lakehouse/concepts/iceberg-v3.md",
+      "sha256": "f5e1a54e351245aa"
+    },
+    {
+      "path": ".claude/kb/lakehouse/index.md",
+      "sha256": "e8cf3c81e0c540bd"
+    },
+    {
+      "path": ".claude/kb/lakehouse/patterns/catalog-setup.md",
+      "sha256": "4f5d347a5a62c704"
+    },
+    {
+      "path": ".claude/kb/lakehouse/patterns/delta-operations.md",
+      "sha256": "e8f5966920d6baa3"
+    },
+    {
+      "path": ".claude/kb/lakehouse/patterns/iceberg-operations.md",
+      "sha256": "0c9d13e9a55023d0"
+    },
+    {
+      "path": ".claude/kb/lakehouse/patterns/migration-to-open-formats.md",
+      "sha256": "189127d4d46c94f9"
+    },
+    {
+      "path": ".claude/kb/lakehouse/quick-reference.md",
+      "sha256": "6788a9b1c3474e7b"
+    },
+    {
+      "path": ".claude/kb/medallion/concepts/bronze-layer.md",
+      "sha256": "c5afa47810feb86c"
+    },
+    {
+      "path": ".claude/kb/medallion/concepts/domain-modeling.md",
+      "sha256": "4e0c917a7d364561"
+    },
+    {
+      "path": ".claude/kb/medallion/concepts/gold-layer.md",
+      "sha256": "4c056f98ab522018"
+    },
+    {
+      "path": ".claude/kb/medallion/concepts/silver-layer.md",
+      "sha256": "30d2e6b5737c2a12"
+    },
+    {
+      "path": ".claude/kb/medallion/index.md",
+      "sha256": "5b36258806393cef"
+    },
+    {
+      "path": ".claude/kb/medallion/patterns/data-quality-gates.md",
+      "sha256": "994a748845d6225d"
+    },
+    {
+      "path": ".claude/kb/medallion/patterns/incremental-loading.md",
+      "sha256": "bc7eb37901b8ff3f"
+    },
+    {
+      "path": ".claude/kb/medallion/patterns/layer-transitions.md",
+      "sha256": "cb0b978b230811c7"
+    },
+    {
+      "path": ".claude/kb/medallion/patterns/schema-evolution.md",
+      "sha256": "bf8be3853389b885"
+    },
+    {
+      "path": ".claude/kb/medallion/quick-reference.md",
+      "sha256": "cbff563c0a65cc9c"
+    },
+    {
+      "path": ".claude/kb/medallion/specs/medallion-config.yaml",
+      "sha256": "8aeebd826c3e16f2"
+    },
+    {
+      "path": ".claude/kb/prompt-engineering/concepts/chain-of-thought.md",
+      "sha256": "2ca9b1d73b2a01ee"
+    },
+    {
+      "path": ".claude/kb/prompt-engineering/concepts/few-shot-prompting.md",
+      "sha256": "192d28373b839089"
+    },
+    {
+      "path": ".claude/kb/prompt-engineering/concepts/output-formatting.md",
+      "sha256": "8c2eb7708ae852af"
+    },
+    {
+      "path": ".claude/kb/prompt-engineering/concepts/structured-extraction.md",
+      "sha256": "74fa0379de86ac74"
+    },
+    {
+      "path": ".claude/kb/prompt-engineering/concepts/system-prompts.md",
+      "sha256": "d08a404dcadd9f18"
+    },
+    {
+      "path": ".claude/kb/prompt-engineering/index.md",
+      "sha256": "cc45e9e50b2dfd77"
+    },
+    {
+      "path": ".claude/kb/prompt-engineering/patterns/document-extraction.md",
+      "sha256": "8351a2d7c29b38eb"
+    },
+    {
+      "path": ".claude/kb/prompt-engineering/patterns/multi-pass-extraction.md",
+      "sha256": "0ea067f05a1a1655"
+    },
+    {
+      "path": ".claude/kb/prompt-engineering/patterns/prompt-template.md",
+      "sha256": "beb73161afcda413"
+    },
+    {
+      "path": ".claude/kb/prompt-engineering/patterns/validation-prompts.md",
+      "sha256": "84e3e924d3262f86"
+    },
+    {
+      "path": ".claude/kb/prompt-engineering/quick-reference.md",
+      "sha256": "32b5ee2d2b8cadeb"
+    },
+    {
+      "path": ".claude/kb/prompt-engineering/specs/prompt-formats.yaml",
+      "sha256": "eb5ba97d1a136c1b"
+    },
+    {
+      "path": ".claude/kb/pydantic/concepts/base-model.md",
+      "sha256": "39944d56fb888f9e"
+    },
+    {
+      "path": ".claude/kb/pydantic/concepts/field-types.md",
+      "sha256": "35056975a015f515"
+    },
+    {
+      "path": ".claude/kb/pydantic/concepts/nested-models.md",
+      "sha256": "f59eed2e8ab0a112"
+    },
+    {
+      "path": ".claude/kb/pydantic/concepts/validators.md",
+      "sha256": "ed8992967d61ac15"
+    },
+    {
+      "path": ".claude/kb/pydantic/index.md",
+      "sha256": "d16d50dc3998839a"
+    },
+    {
+      "path": ".claude/kb/pydantic/patterns/custom-validators.md",
+      "sha256": "75b49bfc61b1013f"
+    },
+    {
+      "path": ".claude/kb/pydantic/patterns/error-handling.md",
+      "sha256": "dde5f87935e9e39b"
+    },
+    {
+      "path": ".claude/kb/pydantic/patterns/extraction-schema.md",
+      "sha256": "e97bc86298ea383a"
+    },
+    {
+      "path": ".claude/kb/pydantic/patterns/llm-output-validation.md",
+      "sha256": "ebaa2abddefb0f59"
+    },
+    {
+      "path": ".claude/kb/pydantic/quick-reference.md",
+      "sha256": "d6e93440cea238a9"
+    },
+    {
+      "path": ".claude/kb/pydantic/specs/invoice-schema.yaml",
+      "sha256": "6d596bccb8250e0c"
+    },
+    {
+      "path": ".claude/kb/python/concepts/context-managers.md",
+      "sha256": "d336936dff3dc722"
+    },
+    {
+      "path": ".claude/kb/python/concepts/dataclasses.md",
+      "sha256": "716324463350cd1f"
+    },
+    {
+      "path": ".claude/kb/python/concepts/generators.md",
+      "sha256": "f02037cfd33fb8ba"
+    },
+    {
+      "path": ".claude/kb/python/concepts/type-hints.md",
+      "sha256": "2d12217b05c469e6"
+    },
+    {
+      "path": ".claude/kb/python/index.md",
+      "sha256": "12b8f53afed45fcf"
+    },
+    {
+      "path": ".claude/kb/python/patterns/clean-architecture.md",
+      "sha256": "933bc76ead19665c"
+    },
+    {
+      "path": ".claude/kb/python/patterns/error-handling.md",
+      "sha256": "7d6ab72b11a41448"
+    },
+    {
+      "path": ".claude/kb/python/patterns/file-parser.md",
+      "sha256": "1c2eaefe99515116"
+    },
+    {
+      "path": ".claude/kb/python/patterns/functional-patterns.md",
+      "sha256": "a2e1f2681baa5873"
+    },
+    {
+      "path": ".claude/kb/python/quick-reference.md",
+      "sha256": "06fde0abf28b2b56"
+    },
+    {
+      "path": ".claude/kb/python/specs/python-standards.yaml",
+      "sha256": "1c657e6fe87dd1fb"
+    },
+    {
+      "path": ".claude/kb/README.md",
+      "sha256": "0ed8d9faee7371d1"
+    },
+    {
+      "path": ".claude/kb/shared/anti-patterns.md",
+      "sha256": "d9ad3894ff81410f"
+    },
+    {
+      "path": ".claude/kb/spark/concepts/catalyst-optimizer.md",
+      "sha256": "8145e9a0c62948d2"
+    },
+    {
+      "path": ".claude/kb/spark/concepts/dataframe-api.md",
+      "sha256": "6b8792bb37e13f80"
+    },
+    {
+      "path": ".claude/kb/spark/concepts/partitioning.md",
+      "sha256": "d822add0475da8c8"
+    },
+    {
+      "path": ".claude/kb/spark/concepts/real-time-mode.md",
+      "sha256": "bf6f637cf336090e"
+    },
+    {
+      "path": ".claude/kb/spark/concepts/spark-connect.md",
+      "sha256": "a99f67b4337d209b"
+    },
+    {
+      "path": ".claude/kb/spark/index.md",
+      "sha256": "e5af0a84fc5a91f4"
+    },
+    {
+      "path": ".claude/kb/spark/patterns/delta-integration.md",
+      "sha256": "acc6e942cbfc1a33"
+    },
+    {
+      "path": ".claude/kb/spark/patterns/performance-tuning.md",
+      "sha256": "cd8fe0d19ee501d0"
+    },
+    {
+      "path": ".claude/kb/spark/patterns/read-write-patterns.md",
+      "sha256": "343654f6cddb44e3"
+    },
+    {
+      "path": ".claude/kb/spark/patterns/window-functions.md",
+      "sha256": "b8fa38cd431692d9"
+    },
+    {
+      "path": ".claude/kb/spark/quick-reference.md",
+      "sha256": "c58fc9fde4d5f731"
+    },
+    {
+      "path": ".claude/kb/sql-patterns/concepts/cte-patterns.md",
+      "sha256": "36854ff01f2a04a4"
+    },
+    {
+      "path": ".claude/kb/sql-patterns/concepts/set-operations.md",
+      "sha256": "8d79742f25d8d611"
+    },
+    {
+      "path": ".claude/kb/sql-patterns/concepts/window-functions.md",
+      "sha256": "111f99a73c5f81f4"
+    },
+    {
+      "path": ".claude/kb/sql-patterns/index.md",
+      "sha256": "1a779215633ca32c"
+    },
+    {
+      "path": ".claude/kb/sql-patterns/patterns/cross-dialect.md",
+      "sha256": "bfa5e35dd0a81efd"
+    },
+    {
+      "path": ".claude/kb/sql-patterns/patterns/deduplication.md",
+      "sha256": "7b437fa8e669d2f1"
+    },
+    {
+      "path": ".claude/kb/sql-patterns/patterns/gap-and-island.md",
+      "sha256": "2c1a1789caad01ec"
+    },
+    {
+      "path": ".claude/kb/sql-patterns/patterns/pivot-unpivot.md",
+      "sha256": "fe41d6ecb9a09ce3"
+    },
+    {
+      "path": ".claude/kb/sql-patterns/quick-reference.md",
+      "sha256": "52933177b86c9a42"
+    },
+    {
+      "path": ".claude/kb/supabase/concepts/edge-functions.md",
+      "sha256": "a0af95c7637789ea"
+    },
+    {
+      "path": ".claude/kb/supabase/concepts/pgvector-fundamentals.md",
+      "sha256": "b70bfee934d3679f"
+    },
+    {
+      "path": ".claude/kb/supabase/concepts/realtime.md",
+      "sha256": "d0dafbdbcaf1653b"
+    },
+    {
+      "path": ".claude/kb/supabase/concepts/rls-policies.md",
+      "sha256": "ffb31f700167d099"
+    },
+    {
+      "path": ".claude/kb/supabase/index.md",
+      "sha256": "51f91bb3aa39d17e"
+    },
+    {
+      "path": ".claude/kb/supabase/patterns/multi-tenant-rls.md",
+      "sha256": "41295fc858dc4231"
+    },
+    {
+      "path": ".claude/kb/supabase/patterns/rag-vector-store.md",
+      "sha256": "ec6eb5da1b8dffcc"
+    },
+    {
+      "path": ".claude/kb/supabase/patterns/webhook-edge-function.md",
+      "sha256": "fcfa435a6ddf0f18"
+    },
+    {
+      "path": ".claude/kb/supabase/quick-reference.md",
+      "sha256": "cd069b7073d94a02"
+    },
+    {
+      "path": ".claude/kb/terraform/concepts/modules.md",
+      "sha256": "130957c58627a78e"
+    },
+    {
+      "path": ".claude/kb/terraform/concepts/providers.md",
+      "sha256": "d88adb6cecdc8ea8"
+    },
+    {
+      "path": ".claude/kb/terraform/concepts/resources.md",
+      "sha256": "adbbb42553f7067c"
+    },
+    {
+      "path": ".claude/kb/terraform/concepts/state.md",
+      "sha256": "eba79da0eb047bb9"
+    },
+    {
+      "path": ".claude/kb/terraform/concepts/variables.md",
+      "sha256": "2bdbd45eb6e28105"
+    },
+    {
+      "path": ".claude/kb/terraform/concepts/workspaces.md",
+      "sha256": "76ddafc34df05855"
+    },
+    {
+      "path": ".claude/kb/terraform/index.md",
+      "sha256": "4fd451df36bd05f4"
+    },
+    {
+      "path": ".claude/kb/terraform/patterns/bigquery-module.md",
+      "sha256": "4ce556bfaab94bd7"
+    },
+    {
+      "path": ".claude/kb/terraform/patterns/cloud-run-module.md",
+      "sha256": "afdd73a78962d594"
+    },
+    {
+      "path": ".claude/kb/terraform/patterns/gcs-module.md",
+      "sha256": "d2ecf6f4726333a3"
+    },
+    {
+      "path": ".claude/kb/terraform/patterns/iam-module.md",
+      "sha256": "077771923606354e"
+    },
+    {
+      "path": ".claude/kb/terraform/patterns/pubsub-module.md",
+      "sha256": "458e88509e841b86"
+    },
+    {
+      "path": ".claude/kb/terraform/patterns/remote-state.md",
+      "sha256": "1c87e5dac3e39db1"
+    },
+    {
+      "path": ".claude/kb/terraform/quick-reference.md",
+      "sha256": "76fba34ed3ac8007"
+    },
+    {
+      "path": ".claude/kb/terraform/specs/terraform-config.yaml",
+      "sha256": "185a294b85994292"
+    },
+    {
+      "path": ".claude/kb/testing/concepts/fixtures.md",
+      "sha256": "a09b5acb3f409471"
+    },
+    {
+      "path": ".claude/kb/testing/concepts/mocking.md",
+      "sha256": "c97d110ce410693b"
+    },
+    {
+      "path": ".claude/kb/testing/concepts/parametrize.md",
+      "sha256": "d6f93116d31080bf"
+    },
+    {
+      "path": ".claude/kb/testing/concepts/pytest-basics.md",
+      "sha256": "7d85f2838e847cec"
+    },
+    {
+      "path": ".claude/kb/testing/index.md",
+      "sha256": "f7c91d5f93d446d8"
+    },
+    {
+      "path": ".claude/kb/testing/patterns/fixture-factories.md",
+      "sha256": "9fdc067b52e510e6"
+    },
+    {
+      "path": ".claude/kb/testing/patterns/integration-tests.md",
+      "sha256": "a880a466268d9b72"
+    },
+    {
+      "path": ".claude/kb/testing/patterns/spark-testing.md",
+      "sha256": "16103bd14ab2552f"
+    },
+    {
+      "path": ".claude/kb/testing/patterns/unit-test-patterns.md",
+      "sha256": "40f98f1cf1080d53"
+    },
+    {
+      "path": ".claude/kb/testing/quick-reference.md",
+      "sha256": "fc77e468439c6ef2"
+    },
+    {
+      "path": ".claude/kb/testing/specs/test-config.yaml",
+      "sha256": "4f9f61fcee6c0026"
+    },
+    {
+      "path": ".claude/sdd/_index.md",
+      "sha256": "ee92b4151d3a262e"
+    },
+    {
+      "path": ".claude/sdd/architecture/ARCHITECTURE.md",
+      "sha256": "c8b0733f9658ab3f"
+    },
+    {
+      "path": ".claude/sdd/architecture/WORKFLOW_CONTRACTS.yaml",
+      "sha256": "9e3361559c8c06b2"
+    },
+    {
+      "path": ".claude/sdd/README.md",
+      "sha256": "52026763a7d5c225"
+    },
+    {
+      "path": ".claude/sdd/templates/BRAINSTORM_TEMPLATE.md",
+      "sha256": "00dcdf3ef1f6bd2d"
+    },
+    {
+      "path": ".claude/sdd/templates/BUILD_REPORT_TEMPLATE.md",
+      "sha256": "aca7d97e25952009"
+    },
+    {
+      "path": ".claude/sdd/templates/DEFINE_TEMPLATE.md",
+      "sha256": "f8adebc88916adee"
+    },
+    {
+      "path": ".claude/sdd/templates/DESIGN_TEMPLATE.md",
+      "sha256": "9f8deca1e8ea039d"
+    },
+    {
+      "path": ".claude/sdd/templates/SHIPPED_TEMPLATE.md",
+      "sha256": "be4a9be8e904eed7"
+    }
+  ]
+}

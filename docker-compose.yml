@@ -1,0 +1,65 @@
+name: fator-r
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-fator_r}
+      POSTGRES_USER: ${POSTGRES_USER:-fator_r_owner}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD no .env}
+    ports:
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build: ./apps/api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ENV: ${ENV:-prod}
+      # A api conecta com a role da aplicação (RLS). A role dona só entra em migrate/seed.
+      DATABASE_URL: postgresql+asyncpg://${APP_DB_USER:-fator_r_app}:${APP_DB_PASSWORD:?defina APP_DB_PASSWORD}@db:5432/${POSTGRES_DB:-fator_r}
+      UPLOAD_DIR: /data/uploads
+      CORS_ORIGINS: '["http://localhost:${WEB_PORT:-3000}"]'
+      LANGFUSE_TRACING_ENABLED: ${LANGFUSE_TRACING_ENABLED:-true}
+      LANGFUSE_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY:-}
+      LANGFUSE_SECRET_KEY: ${LANGFUSE_SECRET_KEY:-}
+      LANGFUSE_HOST: ${LANGFUSE_HOST:-http://host.docker.internal:3100}
+      LANGFUSE_PUBLIC_URL: ${LANGFUSE_PUBLIC_URL:-http://localhost:3100}
+      LANGFUSE_PROJECT_ID: ${LANGFUSE_PROJECT_ID:-fator-r-dev}
+      # Claude: a chave vem do ambiente de quem sobe a stack; nunca fica em arquivo versionado.
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      LLM_PROVIDER: ${LLM_PROVIDER:-anthropic}
+      # Em produção atrás de proxy: IP/rede do proxy, para o rate limit usar o IP real do cliente.
+      FORWARDED_ALLOW_IPS: ${FORWARDED_ALLOW_IPS:-127.0.0.1}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "127.0.0.1:${API_PORT:-8000}:8000"
+    volumes:
+      # Uploads ficam só no container da api, fora de qualquer pasta pública do web.
+      - uploads:/data/uploads
+
+  web:
+    build:
+      context: ./apps/web
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "127.0.0.1:${WEB_PORT:-3000}:3000"
+
+volumes:
+  db_data:
+  uploads:

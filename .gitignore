@@ -1,0 +1,44 @@
+# Segredos e ambiente
+.env
+.env.*
+!.env.example
+infra/**/.env
+!infra/**/.env.example
+
+# Dados locais (uploads, dumps, backups)
+/data/
+*.dump
+*.sql.gz
+backups/
+
+# Extratos PGDAS-D reais nunca entram no repositório
+fixtures/pgdas/real/
+apps/api/fixtures/pgdas/real/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+playwright-report/
+test-results/
+
+# SO / editores
+.DS_Store
+.idea/
+.vscode/
+
+# Estado local do app (super.engineering)
+.sc/
+.claude/settings.local.json

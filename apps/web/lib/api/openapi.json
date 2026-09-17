@@ -1,0 +1,3431 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Fator R API",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Health Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "Login",
+        "operationId": "login_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "Logout",
+        "operationId": "logout_auth_logout_post",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "tags": ["auth"],
+        "summary": "Me",
+        "operationId": "me_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/companies": {
+      "get": {
+        "tags": ["empresas"],
+        "summary": "Listar Empresas",
+        "operationId": "listar_empresas_companies_get",
+        "parameters": [
+          {
+            "name": "ativo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Ativo"
+            }
+          },
+          {
+            "name": "sujeita_fator_r",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Sujeita Fator R"
+            }
+          },
+          {
+            "name": "busca",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 100
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Busca"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["empresas"],
+        "summary": "Criar Empresa",
+        "operationId": "criar_empresa_companies_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanyIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/companies/{company_id}": {
+      "get": {
+        "tags": ["empresas"],
+        "summary": "Obter Empresa",
+        "operationId": "obter_empresa_companies__company_id__get",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Company Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["empresas"],
+        "summary": "Atualizar Empresa",
+        "operationId": "atualizar_empresa_companies__company_id__patch",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Company Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanyPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/companies/{company_id}/movements": {
+      "get": {
+        "tags": ["movimentos"],
+        "summary": "Listar Movimentos",
+        "operationId": "listar_movimentos_companies__company_id__movements_get",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Company Id"
+            }
+          },
+          {
+            "name": "de",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}$",
+                  "examples": ["2026-09"]
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "De"
+            }
+          },
+          {
+            "name": "ate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}$",
+                  "examples": ["2026-09"]
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Ate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MovementOut"
+                  },
+                  "title": "Response Listar Movimentos Companies  Company Id  Movements Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/companies/{company_id}/movements/{competencia}": {
+      "put": {
+        "tags": ["movimentos"],
+        "summary": "Lancar Movimento",
+        "operationId": "lancar_movimento_companies__company_id__movements__competencia__put",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Company Id"
+            }
+          },
+          {
+            "name": "competencia",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}$",
+              "title": "Competencia"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MovementIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MovementOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/companies/{company_id}/fator-r": {
+      "get": {
+        "tags": ["fator-r"],
+        "summary": "Fator R Da Empresa",
+        "operationId": "fator_r_da_empresa_companies__company_id__fator_r_get",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Company Id"
+            }
+          },
+          {
+            "name": "pa",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}$",
+                  "examples": ["2026-09"]
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Pa"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FatorROut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/portfolio": {
+      "get": {
+        "tags": ["carteira"],
+        "summary": "Carteira",
+        "operationId": "carteira_portfolio_get",
+        "parameters": [
+          {
+            "name": "pa",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}$",
+                  "examples": ["2026-09"]
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Pa"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CarteiraOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/observability/summary": {
+      "get": {
+        "tags": ["observabilidade"],
+        "summary": "Resumo Observabilidade",
+        "operationId": "resumo_observabilidade_observability_summary_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResumoOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/traces": {
+      "get": {
+        "tags": ["observabilidade"],
+        "summary": "Listar Traces",
+        "operationId": "listar_traces_traces_get",
+        "parameters": [
+          {
+            "name": "agente",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 50
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Agente"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": ["ok", "error", "needs_review"],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "sem_nota",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Sem Nota"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TraceList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/traces/{trace_id}": {
+      "get": {
+        "tags": ["observabilidade"],
+        "summary": "Detalhe Trace",
+        "operationId": "detalhe_trace_traces__trace_id__get",
+        "parameters": [
+          {
+            "name": "trace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$",
+              "title": "Trace Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TraceDetalheOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/traces/{trace_id}/human-eval": {
+      "post": {
+        "tags": ["observabilidade"],
+        "summary": "Avaliar Trace",
+        "operationId": "avaliar_trace_traces__trace_id__human_eval_post",
+        "parameters": [
+          {
+            "name": "trace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$",
+              "title": "Trace Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotaHumanaIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvalHumanaOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inbox/pgdas": {
+      "post": {
+        "tags": ["inbox PGDAS-D"],
+        "summary": "Enviar Extrato",
+        "operationId": "enviar_extrato_inbox_pgdas_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_enviar_extrato_inbox_pgdas_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentoOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inbox": {
+      "get": {
+        "tags": ["inbox PGDAS-D"],
+        "summary": "Listar Documentos",
+        "operationId": "listar_documentos_inbox_get",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": ["received", "parsed", "needs_review", "linked", "rejected"],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentoList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inbox/{document_id}": {
+      "get": {
+        "tags": ["inbox PGDAS-D"],
+        "summary": "Obter Documento",
+        "operationId": "obter_documento_inbox__document_id__get",
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Document Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentoOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inbox/{document_id}/arquivo": {
+      "get": {
+        "tags": ["inbox PGDAS-D"],
+        "summary": "Baixar Original",
+        "operationId": "baixar_original_inbox__document_id__arquivo_get",
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Document Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inbox/{document_id}/link": {
+      "post": {
+        "tags": ["inbox PGDAS-D"],
+        "summary": "Vincular Documento",
+        "operationId": "vincular_documento_inbox__document_id__link_post",
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Document Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VinculoIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentoOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inbox/{document_id}/reject": {
+      "post": {
+        "tags": ["inbox PGDAS-D"],
+        "summary": "Rejeitar Documento",
+        "operationId": "rejeitar_documento_inbox__document_id__reject_post",
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Document Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RejeicaoIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentoOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/companies/{company_id}/simulations": {
+      "post": {
+        "tags": ["simulador"],
+        "summary": "Simular Empresa",
+        "operationId": "simular_empresa_companies__company_id__simulations_post",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Company Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimulacaoIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimulacaoOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["simulador"],
+        "summary": "Historico Simulacoes",
+        "operationId": "historico_simulacoes_companies__company_id__simulations_get",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Company Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 50,
+              "minimum": 1,
+              "default": 10,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SimulacaoOut"
+                  },
+                  "title": "Response Historico Simulacoes Companies  Company Id  Simulations Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agents/consultor/chat": {
+      "post": {
+        "tags": ["agentes"],
+        "summary": "Conversar Consultor",
+        "operationId": "conversar_consultor_agents_consultor_chat_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsultorIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaAgente"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agents/priorizador/chat": {
+      "post": {
+        "tags": ["agentes"],
+        "summary": "Conversar Priorizador",
+        "operationId": "conversar_priorizador_agents_priorizador_chat_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PriorizadorIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaAgente"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agents/echo/run": {
+      "post": {
+        "tags": ["agentes (dev)"],
+        "summary": "Rodar Echo",
+        "operationId": "rodar_echo_agents_echo_run_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EchoIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AgentOut": {
+        "properties": {
+          "texto": {
+            "type": "string",
+            "title": "Texto"
+          },
+          "decisao": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Decisao"
+          },
+          "trace_id": {
+            "type": "string",
+            "title": "Trace Id"
+          }
+        },
+        "type": "object",
+        "required": ["texto", "decisao", "trace_id"],
+        "title": "AgentOut"
+      },
+      "Body_enviar_extrato_inbox_pgdas_post": {
+        "properties": {
+          "arquivo": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "Arquivo"
+          }
+        },
+        "type": "object",
+        "required": ["arquivo"],
+        "title": "Body_enviar_extrato_inbox_pgdas_post"
+      },
+      "CarteiraOut": {
+        "properties": {
+          "pa": {
+            "type": "string",
+            "title": "Pa"
+          },
+          "kpis": {
+            "$ref": "#/components/schemas/KpisOut"
+          },
+          "linhas": {
+            "items": {
+              "$ref": "#/components/schemas/LinhaCarteiraOut"
+            },
+            "type": "array",
+            "title": "Linhas"
+          }
+        },
+        "type": "object",
+        "required": ["pa", "kpis", "linhas"],
+        "title": "CarteiraOut"
+      },
+      "CompanyIn": {
+        "properties": {
+          "nome": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Nome"
+          },
+          "cnpj": {
+            "type": "string",
+            "title": "Cnpj"
+          },
+          "cnae": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cnae"
+          },
+          "atividade": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Atividade"
+          },
+          "sujeita_fator_r": {
+            "type": "boolean",
+            "title": "Sujeita Fator R"
+          },
+          "qtd_socios": {
+            "type": "integer",
+            "maximum": 1000.0,
+            "minimum": 0.0,
+            "title": "Qtd Socios",
+            "default": 1
+          },
+          "contato": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contato"
+          },
+          "pacote": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["monitoramento", "correcao", "retainer"]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pacote"
+          },
+          "honorario_mensal": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,12}|(?=[\\d.]{1,15}0*$)\\d{0,12}\\.\\d{0,2}0*$)"
+              }
+            ],
+            "title": "Honorario Mensal",
+            "default": "0"
+          },
+          "ativo": {
+            "type": "boolean",
+            "title": "Ativo",
+            "default": true
+          },
+          "notas": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notas"
+          },
+          "inicio_atividade": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}$",
+                "examples": ["2026-09"]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inicio Atividade"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["nome", "cnpj", "sujeita_fator_r"],
+        "title": "CompanyIn"
+      },
+      "CompanyList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CompanyOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          }
+        },
+        "type": "object",
+        "required": ["items", "total"],
+        "title": "CompanyList"
+      },
+      "CompanyOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "nome": {
+            "type": "string",
+            "title": "Nome"
+          },
+          "cnpj": {
+            "type": "string",
+            "title": "Cnpj"
+          },
+          "cnpj_formatado": {
+            "type": "string",
+            "title": "Cnpj Formatado"
+          },
+          "cnae": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cnae"
+          },
+          "atividade": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Atividade"
+          },
+          "sujeita_fator_r": {
+            "type": "boolean",
+            "title": "Sujeita Fator R"
+          },
+          "qtd_socios": {
+            "type": "integer",
+            "title": "Qtd Socios"
+          },
+          "contato": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contato"
+          },
+          "pacote": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["monitoramento", "correcao", "retainer"]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pacote"
+          },
+          "honorario_mensal": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Honorario Mensal"
+          },
+          "ativo": {
+            "type": "boolean",
+            "title": "Ativo"
+          },
+          "notas": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notas"
+          },
+          "inicio_atividade": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inicio Atividade"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nome",
+          "cnpj",
+          "cnpj_formatado",
+          "cnae",
+          "atividade",
+          "sujeita_fator_r",
+          "qtd_socios",
+          "contato",
+          "pacote",
+          "honorario_mensal",
+          "ativo",
+          "notas",
+          "inicio_atividade"
+        ],
+        "title": "CompanyOut"
+      },
+      "CompanyPatch": {
+        "properties": {
+          "nome": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nome"
+          },
+          "cnpj": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cnpj"
+          },
+          "cnae": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cnae"
+          },
+          "atividade": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Atividade"
+          },
+          "sujeita_fator_r": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sujeita Fator R"
+          },
+          "qtd_socios": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Qtd Socios"
+          },
+          "contato": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contato"
+          },
+          "pacote": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["monitoramento", "correcao", "retainer"]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pacote"
+          },
+          "honorario_mensal": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,12}|(?=[\\d.]{1,15}0*$)\\d{0,12}\\.\\d{0,2}0*$)"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Honorario Mensal"
+          },
+          "ativo": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ativo"
+          },
+          "notas": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notas"
+          },
+          "inicio_atividade": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}$",
+                "examples": ["2026-09"]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inicio Atividade"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "CompanyPatch"
+      },
+      "ConsultorIn": {
+        "properties": {
+          "mensagem": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Mensagem"
+          },
+          "company_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["mensagem"],
+        "title": "ConsultorIn"
+      },
+      "DocumentoList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/DocumentoOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "contagem_por_status": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Contagem Por Status"
+          }
+        },
+        "type": "object",
+        "required": ["items", "total", "contagem_por_status"],
+        "title": "DocumentoList"
+      },
+      "DocumentoOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "texto_agente": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Texto Agente"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["received", "parsed", "needs_review", "linked", "rejected"],
+            "title": "Status"
+          },
+          "motivo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motivo"
+          },
+          "company_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Id"
+          },
+          "nome_original": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nome Original"
+          },
+          "mime": {
+            "type": "string",
+            "enum": ["application/pdf", "text/plain"],
+            "title": "Mime"
+          },
+          "tamanho_bytes": {
+            "type": "integer",
+            "title": "Tamanho Bytes"
+          },
+          "campos": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Campos"
+          },
+          "confianca": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confianca"
+          },
+          "parser_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parser Version"
+          },
+          "trace_id": {
+            "type": "string",
+            "title": "Trace Id"
+          },
+          "criado_em": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Criado Em"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "motivo",
+          "company_id",
+          "nome_original",
+          "mime",
+          "tamanho_bytes",
+          "campos",
+          "confianca",
+          "parser_version",
+          "trace_id",
+          "criado_em"
+        ],
+        "title": "DocumentoOut"
+      },
+      "EchoIn": {
+        "properties": {
+          "mensagem": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Mensagem"
+          }
+        },
+        "type": "object",
+        "required": ["mensagem"],
+        "title": "EchoIn"
+      },
+      "EvalHumanaOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "nota": {
+            "type": "string",
+            "enum": ["acerto", "parcial", "erro"],
+            "title": "Nota"
+          },
+          "comentario": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comentario"
+          },
+          "criado_em": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Criado Em"
+          }
+        },
+        "type": "object",
+        "required": ["id", "user_id", "nota", "comentario", "criado_em"],
+        "title": "EvalHumanaOut"
+      },
+      "EvalOuroOut": {
+        "properties": {
+          "campo": {
+            "type": "string",
+            "title": "Campo"
+          },
+          "esperado": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Esperado"
+          },
+          "obtido": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Obtido"
+          },
+          "dentro_tolerancia": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dentro Tolerancia"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ok", "erro", "ouro_indisponivel"],
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": ["campo", "esperado", "obtido", "dentro_tolerancia", "status"],
+        "title": "EvalOuroOut"
+      },
+      "FatorROut": {
+        "properties": {
+          "pa": {
+            "type": "string",
+            "title": "Pa"
+          },
+          "janela_inicio": {
+            "type": "string",
+            "title": "Janela Inicio"
+          },
+          "janela_fim": {
+            "type": "string",
+            "title": "Janela Fim"
+          },
+          "meses_preenchidos": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Meses Preenchidos"
+          },
+          "meses_faltantes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Meses Faltantes"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ok", "dados_insuficientes"],
+            "title": "Status"
+          },
+          "motivo": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "rbt12_zero",
+                  "empresa_nova_regra_pendente",
+                  "rbt12_acima_do_limite_do_simples"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motivo"
+          },
+          "rbt12": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Rbt12"
+          },
+          "fs12": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Fs12"
+          },
+          "fator_r": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fator R"
+          },
+          "anexo": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["III", "V"]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Anexo"
+          },
+          "semaforo": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["vermelho", "amarelo", "verde"]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Semaforo"
+          },
+          "folha_minima_28": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Folha Minima 28"
+          },
+          "folha_minima_meta": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Folha Minima Meta"
+          },
+          "gap_12m_28": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gap 12M 28"
+          },
+          "reforco_mensal_28": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reforco Mensal 28"
+          },
+          "gap_12m_meta": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gap 12M Meta"
+          },
+          "reforco_mensal_meta": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reforco Mensal Meta"
+          },
+          "aliquota_efetiva_iii": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Aliquota Efetiva Iii"
+          },
+          "aliquota_efetiva_v": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Aliquota Efetiva V"
+          },
+          "economia_12m": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Economia 12M"
+          },
+          "meta_operacional": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Meta Operacional"
+          },
+          "cpp_integra_fs12": {
+            "type": "boolean",
+            "title": "Cpp Integra Fs12"
+          },
+          "tabela_vigencia_inicio": {
+            "type": "string",
+            "format": "date",
+            "title": "Tabela Vigencia Inicio"
+          }
+        },
+        "type": "object",
+        "required": [
+          "pa",
+          "janela_inicio",
+          "janela_fim",
+          "meses_preenchidos",
+          "meses_faltantes",
+          "status",
+          "motivo",
+          "rbt12",
+          "fs12",
+          "fator_r",
+          "anexo",
+          "semaforo",
+          "folha_minima_28",
+          "folha_minima_meta",
+          "gap_12m_28",
+          "reforco_mensal_28",
+          "gap_12m_meta",
+          "reforco_mensal_meta",
+          "aliquota_efetiva_iii",
+          "aliquota_efetiva_v",
+          "economia_12m",
+          "meta_operacional",
+          "cpp_integra_fs12",
+          "tabela_vigencia_inicio"
+        ],
+        "title": "FatorROut"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "KpisOut": {
+        "properties": {
+          "monitoradas": {
+            "type": "integer",
+            "title": "Monitoradas"
+          },
+          "no_v": {
+            "type": "integer",
+            "title": "No V"
+          },
+          "no_limite": {
+            "type": "integer",
+            "title": "No Limite"
+          },
+          "seguras": {
+            "type": "integer",
+            "title": "Seguras"
+          },
+          "dados_insuficientes": {
+            "type": "integer",
+            "title": "Dados Insuficientes"
+          },
+          "economia_em_jogo": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Economia Em Jogo"
+          },
+          "honorarios_pacotes": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Honorarios Pacotes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "monitoradas",
+          "no_v",
+          "no_limite",
+          "seguras",
+          "dados_insuficientes",
+          "economia_em_jogo",
+          "honorarios_pacotes"
+        ],
+        "title": "KpisOut"
+      },
+      "LinhaCarteiraOut": {
+        "properties": {
+          "company_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Company Id"
+          },
+          "nome": {
+            "type": "string",
+            "title": "Nome"
+          },
+          "cnpj_formatado": {
+            "type": "string",
+            "title": "Cnpj Formatado"
+          },
+          "pacote": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["monitoramento", "correcao", "retainer"]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pacote"
+          },
+          "honorario_mensal": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Honorario Mensal"
+          },
+          "acao": {
+            "type": "string",
+            "enum": ["reuniao_correcao", "vigiar_simular", "manter", "completar_lancamentos"],
+            "title": "Acao"
+          },
+          "acao_texto": {
+            "type": "string",
+            "title": "Acao Texto"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ok", "dados_insuficientes"],
+            "title": "Status"
+          },
+          "motivo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motivo"
+          },
+          "semaforo": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["vermelho", "amarelo", "verde"]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Semaforo"
+          },
+          "fator_r": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fator R"
+          },
+          "anexo": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["III", "V"]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Anexo"
+          },
+          "rbt12": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Rbt12"
+          },
+          "fs12": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Fs12"
+          },
+          "reforco_mensal_28": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reforco Mensal 28"
+          },
+          "reforco_mensal_meta": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reforco Mensal Meta"
+          },
+          "economia_12m": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Economia 12M"
+          },
+          "meses_faltantes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Meses Faltantes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "company_id",
+          "nome",
+          "cnpj_formatado",
+          "pacote",
+          "honorario_mensal",
+          "acao",
+          "acao_texto",
+          "status",
+          "motivo",
+          "semaforo",
+          "fator_r",
+          "anexo",
+          "rbt12",
+          "fs12",
+          "reforco_mensal_28",
+          "reforco_mensal_meta",
+          "economia_12m",
+          "meses_faltantes"
+        ],
+        "title": "LinhaCarteiraOut"
+      },
+      "LoginIn": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "senha": {
+            "type": "string",
+            "maxLength": 1024,
+            "minLength": 1,
+            "title": "Senha"
+          }
+        },
+        "type": "object",
+        "required": ["email", "senha"],
+        "title": "LoginIn"
+      },
+      "MeOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "firm_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Firm Id"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "nome": {
+            "type": "string",
+            "title": "Nome"
+          }
+        },
+        "type": "object",
+        "required": ["id", "firm_id", "email", "nome"],
+        "title": "MeOut"
+      },
+      "MovementIn": {
+        "properties": {
+          "receita_bruta": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,12}|(?=[\\d.]{1,15}0*$)\\d{0,12}\\.\\d{0,2}0*$)"
+              }
+            ],
+            "title": "Receita Bruta",
+            "default": "0"
+          },
+          "pro_labore": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,12}|(?=[\\d.]{1,15}0*$)\\d{0,12}\\.\\d{0,2}0*$)"
+              }
+            ],
+            "title": "Pro Labore",
+            "default": "0"
+          },
+          "salarios": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,12}|(?=[\\d.]{1,15}0*$)\\d{0,12}\\.\\d{0,2}0*$)"
+              }
+            ],
+            "title": "Salarios",
+            "default": "0"
+          },
+          "cpp": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,12}|(?=[\\d.]{1,15}0*$)\\d{0,12}\\.\\d{0,2}0*$)"
+              }
+            ],
+            "title": "Cpp",
+            "default": "0"
+          },
+          "fgts": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,12}|(?=[\\d.]{1,15}0*$)\\d{0,12}\\.\\d{0,2}0*$)"
+              }
+            ],
+            "title": "Fgts",
+            "default": "0"
+          },
+          "observacao": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observacao"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "MovementIn"
+      },
+      "MovementOut": {
+        "properties": {
+          "competencia": {
+            "type": "string",
+            "title": "Competencia"
+          },
+          "receita_bruta": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Receita Bruta"
+          },
+          "pro_labore": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Pro Labore"
+          },
+          "salarios": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Salarios"
+          },
+          "cpp": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Cpp"
+          },
+          "fgts": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Fgts"
+          },
+          "folha_mes": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Folha Mes"
+          },
+          "origem": {
+            "type": "string",
+            "enum": ["manual", "pgdas", "folha", "agente"],
+            "title": "Origem"
+          },
+          "observacao": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observacao"
+          },
+          "pgdas_document_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pgdas Document Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "competencia",
+          "receita_bruta",
+          "pro_labore",
+          "salarios",
+          "cpp",
+          "fgts",
+          "folha_mes",
+          "origem",
+          "observacao",
+          "pgdas_document_id"
+        ],
+        "title": "MovementOut"
+      },
+      "NotaHumanaIn": {
+        "properties": {
+          "nota": {
+            "type": "string",
+            "enum": ["acerto", "parcial", "erro"],
+            "title": "Nota"
+          },
+          "comentario": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comentario"
+          }
+        },
+        "type": "object",
+        "required": ["nota"],
+        "title": "NotaHumanaIn"
+      },
+      "PriorizadorIn": {
+        "properties": {
+          "mensagem": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Mensagem"
+          },
+          "pa": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}$",
+                "examples": ["2026-09"]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pa"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["mensagem"],
+        "title": "PriorizadorIn"
+      },
+      "RejeicaoIn": {
+        "properties": {
+          "motivo": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 3,
+            "title": "Motivo"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["motivo"],
+        "title": "RejeicaoIn"
+      },
+      "RespostaAgente": {
+        "properties": {
+          "texto": {
+            "type": "string",
+            "title": "Texto"
+          },
+          "decisao": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Decisao"
+          },
+          "trace_id": {
+            "type": "string",
+            "title": "Trace Id"
+          }
+        },
+        "type": "object",
+        "required": ["texto", "decisao", "trace_id"],
+        "title": "RespostaAgente"
+      },
+      "ResumoAgenteOut": {
+        "properties": {
+          "agente": {
+            "type": "string",
+            "title": "Agente"
+          },
+          "volume": {
+            "type": "integer",
+            "title": "Volume"
+          },
+          "latencia_media_ms": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latencia Media Ms"
+          },
+          "confianca_media": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confianca Media"
+          },
+          "erros": {
+            "type": "integer",
+            "title": "Erros"
+          },
+          "reviews": {
+            "type": "integer",
+            "title": "Reviews"
+          }
+        },
+        "type": "object",
+        "required": [
+          "agente",
+          "volume",
+          "latencia_media_ms",
+          "confianca_media",
+          "erros",
+          "reviews"
+        ],
+        "title": "ResumoAgenteOut"
+      },
+      "ResumoOut": {
+        "properties": {
+          "corridas_24h": {
+            "type": "integer",
+            "title": "Corridas 24H"
+          },
+          "corridas_total": {
+            "type": "integer",
+            "title": "Corridas Total"
+          },
+          "pendencias_sem_nota": {
+            "type": "integer",
+            "title": "Pendencias Sem Nota"
+          },
+          "acerto_ouro": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acerto Ouro"
+          },
+          "acerto_humano": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acerto Humano"
+          },
+          "por_agente": {
+            "items": {
+              "$ref": "#/components/schemas/ResumoAgenteOut"
+            },
+            "type": "array",
+            "title": "Por Agente"
+          },
+          "custo_llm_30d": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Custo Llm 30D"
+          },
+          "tokens_llm_30d": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tokens Llm 30D"
+          }
+        },
+        "type": "object",
+        "required": [
+          "corridas_24h",
+          "corridas_total",
+          "pendencias_sem_nota",
+          "acerto_ouro",
+          "acerto_humano",
+          "por_agente",
+          "custo_llm_30d",
+          "tokens_llm_30d"
+        ],
+        "title": "ResumoOut"
+      },
+      "SimulacaoIn": {
+        "properties": {
+          "pa": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}$",
+            "title": "Pa",
+            "examples": ["2026-09"]
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMaximum": 1.0,
+                "minimum": 0.28
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,1}|(?=[\\d.]{1,8}0*$)\\d{0,1}\\.\\d{0,6}0*$)"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Meta"
+          },
+          "fracao_pro_labore": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,1}|(?=[\\d.]{1,8}0*$)\\d{0,1}\\.\\d{0,6}0*$)"
+              }
+            ],
+            "title": "Fracao Pro Labore",
+            "default": "1"
+          },
+          "inss": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,1}|(?=[\\d.]{1,8}0*$)\\d{0,1}\\.\\d{0,6}0*$)"
+              }
+            ],
+            "title": "Inss",
+            "default": "0.11"
+          },
+          "irrf": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,1}|(?=[\\d.]{1,8}0*$)\\d{0,1}\\.\\d{0,6}0*$)"
+              }
+            ],
+            "title": "Irrf",
+            "default": "0.275"
+          },
+          "horizonte_meses": {
+            "type": "integer",
+            "maximum": 60.0,
+            "minimum": 1.0,
+            "title": "Horizonte Meses",
+            "default": 12
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["pa"],
+        "title": "SimulacaoIn"
+      },
+      "SimulacaoOut": {
+        "properties": {
+          "simulation_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Simulation Id"
+          },
+          "trace_id": {
+            "type": "string",
+            "title": "Trace Id"
+          },
+          "pa": {
+            "type": "string",
+            "title": "Pa"
+          },
+          "veredito": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["ja_na_meta", "corrigir", "nao_forcar"]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Veredito"
+          },
+          "texto": {
+            "type": "string",
+            "title": "Texto"
+          },
+          "parametros": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Parametros"
+          },
+          "resultado": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Resultado"
+          },
+          "criado_em": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Criado Em"
+          }
+        },
+        "type": "object",
+        "required": [
+          "simulation_id",
+          "trace_id",
+          "pa",
+          "veredito",
+          "texto",
+          "parametros",
+          "resultado"
+        ],
+        "title": "SimulacaoOut"
+      },
+      "SpanOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "nome": {
+            "type": "string",
+            "title": "Nome"
+          },
+          "tipo": {
+            "type": "string",
+            "title": "Tipo"
+          },
+          "inicio": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inicio"
+          },
+          "fim": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fim"
+          },
+          "latencia_ms": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latencia Ms"
+          },
+          "nivel": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nivel"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
+          },
+          "modelo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Modelo"
+          },
+          "custo": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Custo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nome",
+          "tipo",
+          "inicio",
+          "fim",
+          "latencia_ms",
+          "nivel",
+          "parent_id",
+          "modelo",
+          "custo"
+        ],
+        "title": "SpanOut"
+      },
+      "TraceDetalheOut": {
+        "properties": {
+          "trace": {
+            "$ref": "#/components/schemas/TraceResumoOut"
+          },
+          "entrada": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Entrada"
+          },
+          "saida": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Saida"
+          },
+          "decisao": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Decisao"
+          },
+          "spans": {
+            "items": {
+              "$ref": "#/components/schemas/SpanOut"
+            },
+            "type": "array",
+            "title": "Spans"
+          },
+          "spans_indisponiveis": {
+            "type": "boolean",
+            "title": "Spans Indisponiveis"
+          },
+          "evals_ouro": {
+            "items": {
+              "$ref": "#/components/schemas/EvalOuroOut"
+            },
+            "type": "array",
+            "title": "Evals Ouro"
+          },
+          "evals_humanas": {
+            "items": {
+              "$ref": "#/components/schemas/EvalHumanaOut"
+            },
+            "type": "array",
+            "title": "Evals Humanas"
+          },
+          "langfuse_url": {
+            "type": "string",
+            "title": "Langfuse Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "trace",
+          "entrada",
+          "saida",
+          "decisao",
+          "spans",
+          "spans_indisponiveis",
+          "evals_ouro",
+          "evals_humanas",
+          "langfuse_url"
+        ],
+        "title": "TraceDetalheOut"
+      },
+      "TraceList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/TraceResumoOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          }
+        },
+        "type": "object",
+        "required": ["items", "total"],
+        "title": "TraceList"
+      },
+      "TraceResumoOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "agente": {
+            "type": "string",
+            "title": "Agente"
+          },
+          "gatilho": {
+            "type": "string",
+            "title": "Gatilho"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ok", "error", "needs_review"],
+            "title": "Status"
+          },
+          "confianca": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confianca"
+          },
+          "latencia_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latencia Ms"
+          },
+          "langfuse_sync": {
+            "type": "string",
+            "enum": ["pending", "ok", "failed"],
+            "title": "Langfuse Sync"
+          },
+          "company_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Id"
+          },
+          "criado_em": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Criado Em"
+          },
+          "tem_nota_humana": {
+            "type": "boolean",
+            "title": "Tem Nota Humana"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "agente",
+          "gatilho",
+          "status",
+          "confianca",
+          "latencia_ms",
+          "langfuse_sync",
+          "company_id",
+          "criado_em",
+          "tem_nota_humana"
+        ],
+        "title": "TraceResumoOut"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": ["loc", "msg", "type"],
+        "title": "ValidationError"
+      },
+      "VinculoIn": {
+        "properties": {
+          "company_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Company Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["company_id"],
+        "title": "VinculoIn"
+      }
+    }
+  }
+}

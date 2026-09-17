@@ -1,0 +1,75 @@
+[project]
+name = "fator-r-api"
+version = "0.1.0"
+description = "API da Plataforma Fator R"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "pydantic[email]>=2",
+    "pydantic-settings",
+    "sqlalchemy[asyncio]>=2",
+    "asyncpg",
+    "alembic",
+    "argon2-cffi>=25.1.0",
+    "langfuse>=4.15.4",
+    "opentelemetry-instrumentation-anthropic>=0.62.3",
+    "anthropic>=1.6.0",
+    "apscheduler>=3.10,<4",
+    "python-multipart>=0.0.32",
+    "pdfplumber>=0.11.10",
+    "pypdf>=6.19.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff",
+    "mypy",
+    "pytest",
+    "pytest-asyncio",
+    "httpx",
+    "pytest-cov>=7.1.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/fator_r"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "SIM", "RUF", "DTZ", "PT"]
+ignore = []
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]
+# DDL de migração montado só com constantes do código (sem entrada externa).
+"alembic/versions/**" = ["S608"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+mypy_path = "src"
+
+[[tool.mypy.overrides]]
+# APScheduler 3.x não publica tipos.
+module = ["apscheduler.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-m 'not perf and not langfuse and not e2e_langfuse'"
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "perf: testes de performance (ex.: carteira com 200 empresas)",
+    "langfuse: integração com o Langfuse local de pé",
+    "e2e_langfuse: confere no Langfuse os traces gerados pelo E2E (make e2e)",
+]
