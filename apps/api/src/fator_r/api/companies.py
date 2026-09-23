@@ -93,7 +93,8 @@ class CompanyList(BaseModel):
     total: int
 
 
-def _dados(payload: BaseModel, exclude_unset: bool) -> dict[str, object]:
+def dados_empresa(payload: BaseModel, exclude_unset: bool) -> dict[str, object]:
+    """Corpo de empresa → colunas do banco (também usado pelo cadastro pelo extrato, M8)."""
     dados = payload.model_dump(exclude_unset=exclude_unset)
     inicio = dados.get("inicio_atividade")
     if isinstance(inicio, str):
@@ -121,7 +122,9 @@ async def listar_empresas(
 @router.post("", response_model=CompanyOut, status_code=status.HTTP_201_CREATED)
 async def criar_empresa(payload: CompanyIn, user: CurrentUser, session: FirmSession) -> CompanyOut:
     try:
-        company = await repo.criar(session, user.firm_id, _dados(payload, exclude_unset=False))
+        company = await repo.criar(
+            session, user.firm_id, dados_empresa(payload, exclude_unset=False)
+        )
     except repo.CnpjDuplicado as exc:
         raise HTTPException(
             status.HTTP_409_CONFLICT, "CNPJ já cadastrado neste escritório"
@@ -143,7 +146,7 @@ async def obter_empresa(
 async def atualizar_empresa(
     company_id: uuid.UUID, payload: CompanyPatch, user: CurrentUser, session: FirmSession
 ) -> CompanyOut:
-    dados = _dados(payload, exclude_unset=True)
+    dados = dados_empresa(payload, exclude_unset=True)
     for campo in ("nome", "cnpj", "sujeita_fator_r", "qtd_socios", "honorario_mensal", "ativo"):
         if campo in dados and dados[campo] is None:
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, f"{campo} não pode ser nulo")

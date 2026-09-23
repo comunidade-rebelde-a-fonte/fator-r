@@ -34,6 +34,7 @@ CORPOS: dict[tuple[str, str], dict[str, object]] = {
     ("POST", "/agents/priorizador/chat"): {"mensagem": "o que priorizar?"},
     ("POST", "/inbox/{document_id}/link"): {"company_id": "00000000-0000-0000-0000-000000000000"},
     ("POST", "/inbox/{document_id}/reject"): {"motivo": "tentativa de A"},
+    ("POST", "/inbox/{document_id}/cadastrar-empresa"): empresa_payload(cnpj="04.252.011/0001-10"),
     # Upload: multipart; testado em test_isolation_upload_fica_no_proprio_escritorio.
     ("POST", "/inbox/pgdas"): {},
     ("POST", "/companies"): empresa_payload(cnpj="04.252.011/0001-10"),

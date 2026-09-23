@@ -34,6 +34,7 @@ class LinhaCarteiraOut(BaseModel):
     fs12: Decimal
     reforco_mensal_28: Decimal | None
     reforco_mensal_meta: Decimal | None
+    meta_operacional: Decimal
     economia_12m: Decimal | None
     meses_faltantes: list[CompetenciaOut]
 
@@ -57,6 +58,7 @@ class LinhaCarteiraOut(BaseModel):
             fs12=r.fs12,
             reforco_mensal_28=r.reforco_mensal_28,
             reforco_mensal_meta=r.reforco_mensal_meta,
+            meta_operacional=r.meta_operacional,
             economia_12m=r.economia_12m,
             meses_faltantes=list(r.meses_faltantes),
         )

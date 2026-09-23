@@ -36,11 +36,28 @@ def _igual(obtido: str | None, esperado: str | None) -> bool:
 @pytest.mark.parametrize("pasta", FIXTURES, ids=lambda p: p.name)
 def test_fixture(pasta: Path) -> None:
     resultado, esperado = processar(pasta)
+    # Lacuna conhecida: o documento tem o valor, o parser ainda não lê. Exige-se None, nunca um
+    # valor errado; quando o parser passar a ler, o teste quebra e a lacuna tem de sair.
+    lacunas = esperado.get("lacunas_conhecidas", {})
     for campo in CAMPOS:
+        if campo in lacunas:
+            assert resultado.campos[campo] is None, (
+                f"{pasta.name}.{campo}: lacuna ({lacunas[campo]}) passou a ser lida como "
+                f"{resultado.campos[campo]}; confira o valor e retire a lacuna"
+            )
+            continue
         assert _igual(resultado.campos[campo], esperado["campos"][campo]), (
             f"{pasta.name}.{campo}: obtido={resultado.campos[campo]} "
             f"esperado={esperado['campos'][campo]}"
         )
+    if identificacao := esperado.get("identificacao"):
+        assert resultado.identificacao.nome_empresarial == identificacao["nome_empresarial"]
+        assert resultado.identificacao.sujeita_fator_r is identificacao["sujeita_fator_r"]
+        assert resultado.identificacao.inicio_atividade == identificacao.get("inicio_atividade")
+    if series := esperado.get("series_anteriores"):
+        assert len(resultado.series.receitas) == series["meses"]
+        assert resultado.series.receitas_conferem is series["receitas_conferem"]
+        assert resultado.series.folhas_conferem is series["folhas_conferem"]
     assert Decimal(str(esperado["confianca_min"])) <= resultado.confianca, resultado
     assert resultado.confianca <= Decimal(str(esperado["confianca_max"])), resultado
     if esperado.get("motivo"):

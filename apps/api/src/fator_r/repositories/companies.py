@@ -67,6 +67,23 @@ async def criar(session: AsyncSession, firm_id: uuid.UUID, dados: dict[str, Any]
     return company
 
 
+async def adicionar(session: AsyncSession, firm_id: uuid.UUID, dados: dict[str, Any]) -> Company:
+    """Insere SEM commit: só para fluxos que comitam depois, como tracer.run (M8).
+
+    Diferente de `criar`, não encerra a transação; se algo falhar depois, a empresa sai junto
+    no rollback.
+    """
+    company = Company(firm_id=firm_id, **dados)
+    session.add(company)
+    try:
+        await session.flush()
+    except IntegrityError as exc:
+        if "uq_companies_firm_cnpj" in str(exc.orig):
+            raise CnpjDuplicado from exc
+        raise
+    return company
+
+
 async def atualizar(
     session: AsyncSession, firm_id: uuid.UUID, company_id: uuid.UUID, dados: dict[str, Any]
 ) -> Company | None:

@@ -2,10 +2,15 @@
 
 Regras invioláveis (CLAUDE.md §3.8, §3.9):
 - confiança abaixo do limiar do escritório ou CNPJ não encontrado -> needs_review, sem escrita;
-- vinculado com RPA: cria só a RECEITA na competência do PA, só se a competência não existir;
-- nunca escreve pró-labore, salários, CPP ou FGTS.
+- vinculado com RPA: cria a RECEITA na competência do PA, só se a competência não existir;
+- se o extrato trouxer as tabelas mês a mês dos 12 meses anteriores e elas conferirem com o RBT12
+  e a FS12 declarados, cria também esses meses (receita e folha total declarada), só em
+  competências vazias; nunca sobrescreve lançamento existente (decisão do usuário, 2026-09-22);
+- CNPJ fora da carteira: o analista pode cadastrar a empresa pelo extrato (M8), sempre por pedido
+  explícito, nunca automaticamente.
 """
 
+import uuid
 from dataclasses import dataclass
 from decimal import Decimal
 from pathlib import Path
@@ -34,6 +39,59 @@ class DocumentoEmEstadoInvalido(ValueError):
     pass
 
 
+class ExtratoSemCnpjValido(ValueError):
+    pass
+
+
+class CnpjDivergente(ValueError):
+    pass
+
+
+class CnpjJaCadastrado(ValueError):
+    def __init__(self, company_id: uuid.UUID) -> None:
+        super().__init__("CNPJ já cadastrado neste escritório")
+        self.company_id = company_id
+
+
+@dataclass(frozen=True)
+class SugestaoCadastro:
+    cnpj: str
+    nome_empresarial: str | None
+    sujeita_fator_r: bool | None
+    inicio_atividade: str | None = None
+
+
+MOTIVOS_ANTERIORES = {
+    "receitas_anteriores_nao_conferem": "as receitas mês a mês não somam o RBT12 declarado",
+    "folhas_anteriores_nao_conferem": "a folha mês a mês não soma a FS12 declarada",
+}
+OBS_ANTERIOR_COM_FOLHA = (
+    "Receita e folha lidas do extrato PGDAS-D do PA {pa}. Folha = total declarado no PGDAS-D, "
+    "sem divisão entre pró-labore, salários, CPP e FGTS."
+)
+OBS_ANTERIOR_SEM_FOLHA = (
+    "Receita lida do extrato PGDAS-D do PA {pa}. Atividade sem fator r: folha não se aplica."
+)
+
+
+@dataclass(frozen=True)
+class MesesAnteriores:
+    """O que o vínculo fez com as tabelas dos 12 meses anteriores ao PA."""
+
+    criados: int = 0
+    existentes: int = 0
+    com_folha: bool = False
+    motivo: str | None = None
+
+    def como_dict(self) -> dict[str, Any]:
+        return {
+            "criados": self.criados,
+            "existentes": self.existentes,
+            "com_folha": self.com_folha,
+            "motivo": self.motivo,
+        }
+
+
 @dataclass(frozen=True)
 class ResultadoAgente:
     documento: PgdasDocument
@@ -43,11 +101,33 @@ class ResultadoAgente:
     acerto_ouro: Decimal | None = None
 
 
-def _texto(documento: PgdasDocument, movimento: Movimento, company: Company | None) -> str:
-    return com_disclaimer(_texto_base(documento, movimento, company))
+def _texto(
+    documento: PgdasDocument,
+    movimento: Movimento,
+    company: Company | None,
+    anteriores: MesesAnteriores | None = None,
+) -> str:
+    return com_disclaimer(_texto_base(documento, movimento, company, anteriores))
 
 
-def _texto_base(documento: PgdasDocument, movimento: Movimento, company: Company | None) -> str:
+def _frase_anteriores(anteriores: MesesAnteriores) -> str:
+    if anteriores.criados:
+        conteudo = "receita e folha total declarada" if anteriores.com_folha else "receita"
+        return (
+            f" {anteriores.criados} meses anteriores lançados a partir do extrato ({conteudo}); "
+            "competências que já existiam não foram alteradas."
+        )
+    if anteriores.motivo:
+        return f" Meses anteriores não lançados: {MOTIVOS_ANTERIORES[anteriores.motivo]}."
+    return ""
+
+
+def _texto_base(
+    documento: PgdasDocument,
+    movimento: Movimento,
+    company: Company | None,
+    anteriores: MesesAnteriores | None = None,
+) -> str:
     campos = documento.campos_json
     pa = campos.get("pa") or "não identificado"
     if documento.status == "linked" and company is not None:
@@ -57,22 +137,84 @@ def _texto_base(documento: PgdasDocument, movimento: Movimento, company: Company
             "sem_rpa": "O extrato não trouxe a receita do PA; nenhum movimento foi criado.",
             "nao_aplicavel": "Nenhum movimento foi criado.",
         }
-        return f"Extrato vinculado a {company.nome}. {frases[movimento]} A folha não é alterada."
+        anteriores = anteriores or MesesAnteriores()
+        final = (
+            " Nenhum lançamento existente foi alterado."
+            if anteriores.com_folha and anteriores.criados
+            else " A folha não é alterada."
+        )
+        return (
+            f"Extrato vinculado a {company.nome}. {frases[movimento]}"
+            f"{_frase_anteriores(anteriores)}{final}"
+        )
     if documento.status == "rejected":
         return "Extrato rejeitado pelo analista."
     return f"Extrato do PA {pa} precisa de revisão: {documento.motivo}."
 
 
+def _meses_para_importar(
+    campos: dict[str, Any],
+) -> tuple[dict[str, tuple[Decimal, Decimal]], bool, str | None]:
+    """Meses anteriores ao PA que podem ser gravados: {competência: (receita, folha)}.
+
+    Só com a série de receitas conferida contra o RBT12. Folha: a série conferida contra a FS12;
+    atividade que o extrato diz não ter fator r entra com folha zero; fora disso, nada é gravado
+    (folha zero inventada derrubaria o Fator R).
+    """
+    series = campos.get("_series_anteriores") or {}
+    receitas: dict[str, str] = series.get("receitas") or {}
+    if not receitas:
+        return {}, False, None
+    if not series.get("receitas_conferem"):
+        return {}, False, "receitas_anteriores_nao_conferem"
+    folhas: dict[str, str] = series.get("folhas") or {}
+    if series.get("folhas_conferem"):
+        return {m: (Decimal(v), Decimal(folhas[m])) for m, v in receitas.items()}, True, None
+    if (campos.get("_identificacao") or {}).get("sujeita_fator_r") is False:
+        return {m: (Decimal(v), Decimal(0)) for m, v in receitas.items()}, False, None
+    return {}, False, "folhas_anteriores_nao_conferem"
+
+
+async def _aplicar_meses_anteriores(
+    session: AsyncSession, documento: PgdasDocument, company: Company
+) -> MesesAnteriores:
+    campos = documento.campos_json
+    meses, com_folha, motivo = _meses_para_importar(campos)
+    modelo = OBS_ANTERIOR_COM_FOLHA if com_folha else OBS_ANTERIOR_SEM_FOLHA
+    criados = existentes = 0
+    for competencia, (receita, folha) in sorted(meses.items()):
+        criado = await movements.criar_se_ausente(
+            session,
+            MonthlyMovement(
+                firm_id=documento.firm_id,
+                company_id=company.id,
+                competencia=parse_competencia(competencia),
+                receita_bruta=receita,
+                pro_labore=Decimal(0),
+                salarios=folha,
+                cpp=Decimal(0),
+                fgts=Decimal(0),
+                origem="pgdas",
+                observacao=modelo.format(pa=campos.get("pa")),
+                pgdas_document_id=documento.id,
+            ),
+        )
+        criados += criado
+        existentes += not criado
+    return MesesAnteriores(criados, existentes, com_folha and criados > 0, motivo)
+
+
 async def _aplicar_vinculo(
     session: AsyncSession, documento: PgdasDocument, company: Company
-) -> Movimento:
-    """Vincula e cria só a receita da competência do PA, se ainda não existir."""
+) -> tuple[Movimento, MesesAnteriores]:
+    """Vincula; cria a receita do PA e os meses anteriores conferidos, só em competências vazias."""
     documento.company_id = company.id
     documento.status = "linked"
     documento.motivo = None
     campos = documento.campos_json
+    anteriores = await _aplicar_meses_anteriores(session, documento, company)
     if not campos.get("pa") or not campos.get("rpa"):
-        return "sem_rpa"
+        return "sem_rpa", anteriores
     criado = await movements.criar_se_ausente(
         session,
         MonthlyMovement(
@@ -89,7 +231,7 @@ async def _aplicar_vinculo(
             pgdas_document_id=documento.id,
         ),
     )
-    return "criado" if criado else "existente"
+    return ("criado" if criado else "existente"), anteriores
 
 
 def _campos_json(resultado: ResultadoParse) -> dict[str, Any]:
@@ -98,7 +240,37 @@ def _campos_json(resultado: ResultadoParse) -> dict[str, Any]:
         **campos,
         "_confianca_campos": {c: str(v) for c, v in resultado.confianca_campos.items()},
         "_motivos": list(resultado.motivos),
+        "_identificacao": {
+            "nome_empresarial": resultado.identificacao.nome_empresarial,
+            "sujeita_fator_r": resultado.identificacao.sujeita_fator_r,
+            "inicio_atividade": resultado.identificacao.inicio_atividade,
+        },
+        "_series_anteriores": {
+            "receitas": resultado.series.receitas,
+            "folhas": resultado.series.folhas,
+            "receitas_conferem": resultado.series.receitas_conferem,
+            "folhas_conferem": resultado.series.folhas_conferem,
+        },
     }
+
+
+def sugestao_cadastro(documento: PgdasDocument) -> SugestaoCadastro | None:
+    """Oferece cadastro só para CNPJ válido que não está na carteira (M8, DEFINE RF-06 e D-04)."""
+    cnpj = documento.campos_json.get("cnpj")
+    if (
+        documento.status != "needs_review"
+        or documento.motivo != "cnpj_nao_encontrado"
+        or not cnpj
+        or not cnpj_valido(cnpj)
+    ):
+        return None
+    identificacao = documento.campos_json.get("_identificacao") or {}
+    return SugestaoCadastro(
+        cnpj=cnpj,
+        nome_empresarial=identificacao.get("nome_empresarial"),
+        sujeita_fator_r=identificacao.get("sujeita_fator_r"),
+        inicio_atividade=identificacao.get("inicio_atividade"),
+    )
 
 
 async def _avaliar_ouro(
@@ -176,6 +348,7 @@ async def receber_documento(
         with run.span("decide") as span:
             limiar = firm.limiar_confianca_parser
             movimento: Movimento = "nao_aplicavel"
+            anteriores = MesesAnteriores()
             if texto.motivo:
                 documento.status, documento.motivo = "needs_review", texto.motivo
             elif company is None:
@@ -184,7 +357,7 @@ async def receber_documento(
                 documento.status = "needs_review"
                 documento.motivo = f"confianca_baixa ({resultado.confianca} < {limiar})"
             else:
-                movimento = await _aplicar_vinculo(session, documento, company)
+                movimento, anteriores = await _aplicar_vinculo(session, documento, company)
             decisao = {
                 "document_id": documento.id,
                 "status": documento.status,
@@ -194,12 +367,13 @@ async def receber_documento(
                 "limiar": limiar,
                 "movimento": movimento,
                 "competencia": resultado.campos["pa"],
+                "meses_anteriores": anteriores.como_dict(),
             }
             await tracer.record_decision(run, tipo="pgdas_documento", dados=decisao)
             span.update(output=decisao)
 
         with run.span("render") as span:
-            texto_final = _texto(documento, movimento, company)
+            texto_final = _texto(documento, movimento, company, anteriores)
             span.update(output={"texto": texto_final})
 
         await run.finish(
@@ -210,6 +384,32 @@ async def receber_documento(
         )
     acerto = await _avaliar_ouro(session, user, documento)
     return ResultadoAgente(documento, True, run.trace_id, texto_final, acerto)
+
+
+async def _decidir_vinculo(
+    run: tracer.AgentRun,
+    session: AsyncSession,
+    documento: PgdasDocument,
+    company: Company,
+    *,
+    tipo: str,
+    extra: dict[str, Any] | None = None,
+) -> tuple[dict[str, Any], Movimento, MesesAnteriores]:
+    """Vínculo pedido pelo analista: lançamentos do extrato (§3.8) + decisão gravada no trace."""
+    movimento, anteriores = await _aplicar_vinculo(session, documento, company)
+    documento.trace_id = run.trace_id
+    decisao = {
+        "document_id": documento.id,
+        "status": documento.status,
+        "company_id": company.id,
+        "movimento": movimento,
+        "competencia": documento.campos_json.get("pa"),
+        "meses_anteriores": anteriores.como_dict(),
+        "origem_decisao": "analista",
+        **(extra or {}),
+    }
+    await tracer.record_decision(run, tipo=tipo, dados=decisao)
+    return decisao, movimento, anteriores
 
 
 async def vincular_manual(
@@ -229,20 +429,12 @@ async def vincular_manual(
         with run.span("tool", input={"company_id": company.id}) as span:
             span.update(output={"empresa": company.nome})
         with run.span("decide") as span:
-            movimento = await _aplicar_vinculo(session, documento, company)
-            documento.trace_id = run.trace_id
-            decisao = {
-                "document_id": documento.id,
-                "status": documento.status,
-                "company_id": company.id,
-                "movimento": movimento,
-                "competencia": documento.campos_json.get("pa"),
-                "origem_decisao": "analista",
-            }
-            await tracer.record_decision(run, tipo="pgdas_vinculo_manual", dados=decisao)
+            decisao, movimento, anteriores = await _decidir_vinculo(
+                run, session, documento, company, tipo="pgdas_vinculo_manual"
+            )
             span.update(output=decisao)
         with run.span("render") as span:
-            texto_final = _texto(documento, movimento, company)
+            texto_final = _texto(documento, movimento, company, anteriores)
             span.update(output={"texto": texto_final})
         await run.finish(decisao=decisao, texto=texto_final, status="ok")
     acerto = await _avaliar_ouro(session, user, documento)
@@ -272,3 +464,68 @@ async def rejeitar(
         texto_final = _texto(documento, "nao_aplicavel", None)
         await run.finish(decisao=decisao, texto=texto_final, status="ok")
     return ResultadoAgente(documento, False, run.trace_id, texto_final)
+
+
+async def cadastrar_e_vincular(
+    session: AsyncSession,
+    user: AuthenticatedUser,
+    documento: PgdasDocument,
+    dados_empresa: dict[str, Any],
+) -> tuple[ResultadoAgente, Company]:
+    """Cadastra a empresa do extrato e vincula o documento, numa transação só (M8).
+
+    As recusas previsíveis (estado, CNPJ ausente/divergente, CNPJ já cadastrado) acontecem antes do
+    trace: não são decisões e não gravam nada. Uma corrida no UNIQUE (firm_id, cnpj) acontece dentro
+    do run e desfaz tudo, deixando o trace de erro.
+    """
+    if documento.status not in ("needs_review", "parsed"):
+        raise DocumentoEmEstadoInvalido(f"Documento em '{documento.status}' não pode ser vinculado")
+    lido = documento.campos_json.get("cnpj")
+    if not lido or not cnpj_valido(lido):
+        raise ExtratoSemCnpjValido("O extrato não tem CNPJ válido para cadastrar a empresa")
+    if dados_empresa["cnpj"] != lido:
+        raise CnpjDivergente("O CNPJ do cadastro precisa ser o mesmo lido no extrato")
+    if (existente := await companies.obter_por_cnpj(session, user.firm_id, lido)) is not None:
+        raise CnpjJaCadastrado(existente.id)
+
+    identificacao = documento.campos_json.get("_identificacao") or {}
+    sugestao_sujeita = identificacao.get("sujeita_fator_r")
+    async with tracer.run(
+        session,
+        agente=AGENTE,
+        gatilho="cadastro_pelo_extrato",
+        firm_id=user.firm_id,
+        user_id=user.id,
+        entrada={"document_id": documento.id, "cnpj": lido},
+    ) as run:
+        with run.span("tool", input={"cnpj": lido}) as span:
+            span.update(output={"cnpj_na_carteira": False})
+        with run.span("decide") as span:
+            company = await companies.adicionar(session, user.firm_id, dados_empresa)
+            run.trace.company_id = company.id
+            decisao, movimento, anteriores = await _decidir_vinculo(
+                run,
+                session,
+                documento,
+                company,
+                tipo="pgdas_cadastro_pelo_extrato",
+                # Só booleanos: medem a leitura do parser sem mandar o nome ao Langfuse.
+                extra={
+                    "empresa_criada": True,
+                    "nome_igual_extrato": dados_empresa["nome"]
+                    == identificacao.get("nome_empresarial"),
+                    "sujeita_igual_sugestao": None
+                    if sugestao_sujeita is None
+                    else dados_empresa["sujeita_fator_r"] == sugestao_sujeita,
+                },
+            )
+            span.update(output=decisao)
+        with run.span("render") as span:
+            texto_final = com_disclaimer(
+                f"Empresa {company.nome} cadastrada a partir do extrato. "
+                + _texto_base(documento, movimento, company, anteriores)
+            )
+            span.update(output={"texto": texto_final})
+        await run.finish(decisao=decisao, texto=texto_final, status="ok")
+    acerto = await _avaliar_ouro(session, user, documento)
+    return ResultadoAgente(documento, False, run.trace_id, texto_final, acerto), company
