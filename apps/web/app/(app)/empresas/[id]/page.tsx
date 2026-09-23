@@ -10,7 +10,9 @@ import { PainelFatorR } from "@/components/fator-r/PainelFatorR";
 import { Simulador } from "@/components/simulador/Simulador";
 import { GradeMensal } from "@/components/empresas/GradeMensal";
 import { Badge } from "@/components/ui/Badge";
+import { Botao, classesBotao } from "@/components/ui/Botao";
 import { Carregando, Erro } from "@/components/ui/Estado";
+import { TituloPagina } from "@/components/ui/TituloPagina";
 import { perguntarConsultor } from "@/lib/api/agents";
 import { atualizarEmpresa, obterEmpresa } from "@/lib/api/companies";
 import { formatarReais, rotuloCompetencia } from "@/lib/format";
@@ -34,8 +36,8 @@ export default function FichaEmpresaPage() {
     <section className="space-y-6">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-xl font-semibold">{e.nome}</h1>
-          <p className="font-mono text-xs text-zinc-500">{e.cnpj_formatado}</p>
+          <TituloPagina>{e.nome}</TituloPagina>
+          <p className="text-muted mt-2 font-mono text-xs">{e.cnpj_formatado}</p>
           <div className="mt-2 flex flex-wrap gap-2">
             <PacoteBadge pacote={e.pacote} />
             {e.sujeita_fator_r ? (
@@ -45,31 +47,31 @@ export default function FichaEmpresaPage() {
             )}
             {e.ativo ? <Badge cor="verde">ativa</Badge> : <Badge>inativa</Badge>}
           </div>
-          <p className="mt-2 text-sm text-zinc-600">
+          <p className="text-muted mt-2 text-sm">
             Honorário do pacote: {formatarReais(e.honorario_mensal)} · Início de atividade:{" "}
             {e.inicio_atividade ? rotuloCompetencia(e.inicio_atividade) : "não informado"}
           </p>
         </div>
         <div className="flex gap-2 text-sm">
-          <Link href={`/empresas/${id}/editar`} className="rounded border px-3 py-1.5">
+          <Link href={`/empresas/${id}/editar`} className={classesBotao("fantasma")}>
             Editar
           </Link>
-          <button type="button" onClick={alternarAtivo} className="rounded border px-3 py-1.5">
+          <Botao variante="fantasma" onClick={alternarAtivo}>
             {e.ativo ? "Desativar" : "Reativar"}
-          </button>
+          </Botao>
         </div>
       </div>
 
       {e.sujeita_fator_r && (
         <div className="space-y-2">
-          <h2 className="font-semibold">Fator R</h2>
+          <h2 className="font-display text-lg tracking-wide uppercase">Fator R</h2>
           <PainelFatorR companyId={id} />
         </div>
       )}
 
       {e.sujeita_fator_r && (
         <div className="space-y-2">
-          <h2 className="font-semibold">Simulador de correção</h2>
+          <h2 className="font-display text-lg tracking-wide uppercase">Simulador de correção</h2>
           <Simulador companyId={id} />
         </div>
       )}
@@ -84,7 +86,7 @@ export default function FichaEmpresaPage() {
       )}
 
       <div className="space-y-2">
-        <h2 className="font-semibold">Movimentos mensais</h2>
+        <h2 className="font-display text-lg tracking-wide uppercase">Movimentos mensais</h2>
         <GradeMensal companyId={id} />
       </div>
     </section>

@@ -1,8 +1,10 @@
+import { TituloPagina } from "@/components/ui/TituloPagina";
+
 export function EmConstrucao({ titulo }: { titulo: string }) {
   return (
     <section>
-      <h1 className="text-xl font-semibold">{titulo}</h1>
-      <p className="mt-2 text-sm text-zinc-500">Em construção.</p>
+      <TituloPagina>{titulo}</TituloPagina>
+      <p className="text-muted mt-2 text-sm">Em construção.</p>
     </section>
   );
 }

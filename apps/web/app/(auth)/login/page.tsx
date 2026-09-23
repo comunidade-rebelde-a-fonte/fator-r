@@ -4,6 +4,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
+import { Botao } from "@/components/ui/Botao";
+import { classesCampo } from "@/components/ui/Campo";
+import { TituloPagina } from "@/components/ui/TituloPagina";
 import { ApiError } from "@/lib/api";
 import { login, ME_QUERY_KEY } from "@/lib/auth";
 
@@ -39,14 +42,14 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex flex-1 items-center justify-center p-6">
+    <main className="flex flex-1 items-center justify-center bg-[radial-gradient(circle_at_18%_0%,rgba(255,134,25,.05),transparent_32%),radial-gradient(circle_at_82%_0%,rgba(255,41,61,.04),transparent_32%)] p-6">
       <form
         onSubmit={onSubmit}
-        className="w-full max-w-sm space-y-4 rounded-lg border border-zinc-200 p-6 shadow-sm"
+        className="border-line bg-panel w-full max-w-sm space-y-4 rounded-[10px] border p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,.8),inset_0_1px_0_rgba(255,255,255,.04)]"
       >
         <div>
-          <h1 className="text-xl font-semibold">Fator R</h1>
-          <p className="text-sm text-zinc-500">Acesso do escritório</p>
+          <TituloPagina>Fator R</TituloPagina>
+          <p className="text-muted mt-2 text-sm">Acesso do escritório</p>
         </div>
         <label className="block text-sm">
           E-mail
@@ -57,7 +60,7 @@ export default function LoginPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded border border-zinc-300 px-3 py-2"
+            className={`mt-1 w-full px-3 py-2 ${classesCampo}`}
           />
         </label>
         <label className="block text-sm">
@@ -69,21 +72,17 @@ export default function LoginPage() {
             required
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
-            className="mt-1 w-full rounded border border-zinc-300 px-3 py-2"
+            className={`mt-1 w-full px-3 py-2 ${classesCampo}`}
           />
         </label>
         {erro && (
-          <p role="alert" className="text-sm text-red-700">
+          <p role="alert" className="text-danger-soft text-sm">
             {erro}
           </p>
         )}
-        <button
-          type="submit"
-          disabled={enviando}
-          className="w-full rounded bg-zinc-900 px-3 py-2 text-sm font-medium text-white disabled:opacity-60"
-        >
+        <Botao type="submit" tamanho="lg" disabled={enviando} className="w-full">
           {enviando ? "Entrando..." : "Entrar"}
-        </button>
+        </Botao>
       </form>
     </main>
   );

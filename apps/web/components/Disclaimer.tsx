@@ -7,7 +7,7 @@ export function Disclaimer() {
     <footer
       role="contentinfo"
       data-testid="disclaimer-pgdas"
-      className="sticky bottom-0 border-t border-amber-300 bg-amber-50 px-4 py-2 text-center text-xs text-amber-900"
+      className="border-accent/60 bg-panel text-fg sticky bottom-0 border-t px-4 py-2 text-center text-xs"
     >
       {DISCLAIMER_TEXTO}
     </footer>

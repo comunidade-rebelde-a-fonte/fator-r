@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
 import { EmpresaForm } from "@/components/empresas/EmpresaForm";
+import { TituloPagina } from "@/components/ui/TituloPagina";
 import { criarEmpresa } from "@/lib/api/companies";
 
 export default function NovaEmpresaPage() {
@@ -11,7 +12,7 @@ export default function NovaEmpresaPage() {
   const queryClient = useQueryClient();
   return (
     <section className="space-y-4">
-      <h1 className="text-xl font-semibold">Nova empresa</h1>
+      <TituloPagina>Nova empresa</TituloPagina>
       <EmpresaForm
         rotuloSalvar="Cadastrar"
         onSalvar={async (dados) => {

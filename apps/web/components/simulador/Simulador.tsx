@@ -5,7 +5,10 @@ import Link from "next/link";
 import { useState, type FormEvent } from "react";
 
 import { Badge } from "@/components/ui/Badge";
+import { Botao } from "@/components/ui/Botao";
+import { classesCampo } from "@/components/ui/Campo";
 import { Erro } from "@/components/ui/Estado";
+import { Painel } from "@/components/ui/Painel";
 import { historicoSimulacoes, simular } from "@/lib/api/simulations";
 import type { SimulacaoOut } from "@/lib/api/types";
 import {
@@ -31,7 +34,7 @@ function percentualParaTaxa(valor: string): string | null {
 function Linha({ rotulo, valor, testid }: { rotulo: string; valor: string; testid?: string }) {
   return (
     <div className="flex justify-between border-b py-1 last:border-0">
-      <span className="text-zinc-600">{rotulo}</span>
+      <span className="text-muted">{rotulo}</span>
       <span className="font-medium" data-testid={testid}>
         {valor}
       </span>
@@ -42,10 +45,7 @@ function Linha({ rotulo, valor, testid }: { rotulo: string; valor: string; testi
 function Resultado({ s }: { s: SimulacaoOut }) {
   const r = s.resultado as Record<string, string | null>;
   return (
-    <div
-      className="space-y-2 rounded border border-zinc-200 p-3 text-sm"
-      data-testid="resultado-simulacao"
-    >
+    <Painel className="space-y-2 p-3 text-sm" data-testid="resultado-simulacao">
       <div className="flex items-center justify-between">
         {s.veredito ? (
           <span className="text-lg" data-testid="veredito">
@@ -71,7 +71,7 @@ function Resultado({ s }: { s: SimulacaoOut }) {
       <Linha rotulo="Custo IRRF" valor={formatarReais(r.custo_irrf)} />
       <Linha rotulo="Economia de DAS no horizonte" valor={formatarReais(r.economia_horizonte)} />
       <Linha rotulo="Líquido" valor={formatarReais(r.liquido)} testid="liquido" />
-    </div>
+    </Painel>
   );
 }
 
@@ -119,7 +119,7 @@ export function Simulador({ companyId }: { companyId: string }) {
     }
   }
 
-  const campo = "mt-1 block w-full rounded border border-zinc-300 px-2 py-1";
+  const campo = `mt-1 block w-full px-2 py-1 ${classesCampo}`;
   return (
     <div className="grid gap-4 md:grid-cols-2">
       <form onSubmit={onSubmit} className="grid grid-cols-2 gap-3 text-sm">
@@ -134,7 +134,7 @@ export function Simulador({ companyId }: { companyId: string }) {
           />
         </label>
         <label>
-          Meta (%) <span className="text-xs text-zinc-500">vazio = do escritório</span>
+          Meta (%) <span className="text-muted text-xs">vazio = do escritório</span>
           <input
             name="sim-meta"
             value={meta}
@@ -182,33 +182,27 @@ export function Simulador({ companyId }: { companyId: string }) {
             className={campo}
           />
         </label>
-        <p className="col-span-2 text-xs text-amber-800" data-testid="aviso-inss">
+        <p className="text-accent-soft col-span-2 text-xs" data-testid="aviso-inss">
           INSS sem teto na v1: o custo pode ficar superestimado para pró-labore alto.
         </p>
         {erro && (
-          <p role="alert" className="col-span-2 text-red-700">
+          <p role="alert" className="text-danger-soft col-span-2">
             {erro}
           </p>
         )}
         <div className="col-span-2">
-          <button
-            type="submit"
-            disabled={simulando}
-            className="rounded bg-zinc-900 px-3 py-1.5 text-white disabled:opacity-60"
-          >
+          <Botao type="submit" disabled={simulando}>
             {simulando ? "Simulando..." : "Simular"}
-          </button>
+          </Botao>
         </div>
       </form>
 
       <div className="space-y-3">
         {resultado && <Resultado s={resultado} />}
         <div className="text-sm">
-          <h3 className="font-semibold">Últimas simulações</h3>
+          <h3 className="font-display tracking-wide uppercase">Últimas simulações</h3>
           {historico.isError && <Erro texto="Não foi possível carregar o histórico." />}
-          {historico.data?.length === 0 && (
-            <p className="text-zinc-500">Nenhuma simulação ainda.</p>
-          )}
+          {historico.data?.length === 0 && <p className="text-muted">Nenhuma simulação ainda.</p>}
           <ul className="space-y-1" data-testid="historico-simulacoes">
             {historico.data?.map((s) => (
               <li key={s.simulation_id} className="flex items-center gap-2">
@@ -218,7 +212,7 @@ export function Simulador({ companyId }: { companyId: string }) {
                   <Badge>insuficiente</Badge>
                 )}
                 <span>PA {rotuloCompetencia(s.pa)}</span>
-                <span className="text-zinc-500">
+                <span className="text-muted">
                   líquido {formatarReais((s.resultado as Record<string, string | null>).liquido)}
                 </span>
                 <Link href={`/observabilidade/traces/${s.trace_id}`} className="text-xs underline">
