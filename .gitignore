@@ -42,3 +42,6 @@ test-results/
 # Estado local do app (super.engineering)
 .sc/
 .claude/settings.local.json
+
+# Declaração anonimizada de origem real (CLAUDE.md §5.3: só em fixtures/pgdas/ após revisão)
+pdf/declaracao_anonimizada.pdf
