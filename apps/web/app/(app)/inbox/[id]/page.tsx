@@ -5,8 +5,14 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
+import { CadastroPeloExtrato } from "@/components/inbox/CadastroPeloExtrato";
 import { StatusDocumentoBadge } from "@/components/inbox/StatusDocumentoBadge";
+import { Botao, classesBotao } from "@/components/ui/Botao";
+import { classesCampo } from "@/components/ui/Campo";
 import { Carregando, Erro } from "@/components/ui/Estado";
+import { Painel } from "@/components/ui/Painel";
+import { CabecalhoTabela, Tabela } from "@/components/ui/Tabela";
+import { TituloPagina } from "@/components/ui/TituloPagina";
 import { ApiError } from "@/lib/api";
 import { listarEmpresas } from "@/lib/api/companies";
 import {
@@ -45,6 +51,7 @@ export default function DocumentoPage() {
   if (documento.isError) return <Erro texto="Documento não encontrado." />;
   const d = documento.data;
   const confiancas = (d.campos._confianca_campos ?? {}) as Record<string, string>;
+  const identificacao = (d.campos._identificacao ?? {}) as { nome_empresarial?: string | null };
   const podeDecidir = d.status === "needs_review" || d.status === "parsed";
 
   async function executar(acao: () => Promise<{ texto_agente?: string | null }>) {
@@ -68,15 +75,20 @@ export default function DocumentoPage() {
     <section className="space-y-4">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-xl font-semibold">
+          <TituloPagina>
             Extrato PGDAS-D <StatusDocumentoBadge status={d.status} />
-          </h1>
-          <p className="text-sm text-zinc-600">
+          </TituloPagina>
+          <p className="text-muted mt-2 text-sm">
             {d.nome_original ?? "arquivo"} · confiança {formatarPercentual(d.confianca)} · parser{" "}
             {d.parser_version ?? "—"}
           </p>
+          {identificacao.nome_empresarial && (
+            <p className="text-sm" data-testid="nome-empresarial">
+              Nome empresarial no extrato: {identificacao.nome_empresarial}
+            </p>
+          )}
           {d.motivo && (
-            <p className="text-sm text-amber-800" data-testid="motivo">
+            <p className="text-accent-soft text-sm" data-testid="motivo">
               Motivo: {d.motivo}
             </p>
           )}
@@ -90,26 +102,23 @@ export default function DocumentoPage() {
           )}
         </div>
         <div className="flex gap-2 text-sm">
-          <a href={urlArquivoOriginal(d.id)} className="rounded border px-3 py-1.5">
+          <a href={urlArquivoOriginal(d.id)} className={classesBotao("fantasma")}>
             Baixar original
           </a>
-          <Link
-            href={`/observabilidade/traces/${d.trace_id}`}
-            className="rounded border px-3 py-1.5"
-          >
+          <Link href={`/observabilidade/traces/${d.trace_id}`} className={classesBotao("fantasma")}>
             Ver trace
           </Link>
         </div>
       </div>
 
-      <table className="w-full max-w-2xl text-left text-sm" data-testid="campos-extraidos">
-        <thead className="border-b text-xs text-zinc-500 uppercase">
+      <Tabela className="max-w-2xl" data-testid="campos-extraidos">
+        <CabecalhoTabela>
           <tr>
             <th className="py-2">Campo</th>
             <th>Valor extraído</th>
             <th className="text-right">Confiança do campo</th>
           </tr>
-        </thead>
+        </CabecalhoTabela>
         <tbody>
           {CAMPOS.map(([chave, rotulo, tipo]) => {
             const valor = (d.campos[chave] as string | null | undefined) ?? null;
@@ -124,7 +133,7 @@ export default function DocumentoPage() {
             return (
               <tr key={chave} className="border-b last:border-0" data-campo={chave}>
                 <td className="py-1">{rotulo}</td>
-                <td className={valor === null ? "text-zinc-400" : ""}>{exibido}</td>
+                <td className={valor === null ? "text-muted" : ""}>{exibido}</td>
                 <td className="text-right">
                   {confiancas[chave] !== undefined ? formatarPercentual(confiancas[chave]) : "—"}
                 </td>
@@ -132,24 +141,29 @@ export default function DocumentoPage() {
             );
           })}
         </tbody>
-      </table>
+      </Tabela>
 
       {mensagem && (
-        <p className="text-sm text-emerald-800" data-testid="mensagem-agente">
+        <p className="text-ok text-sm" data-testid="mensagem-agente">
           {mensagem}
         </p>
       )}
       {erro && (
-        <p role="alert" className="text-sm text-red-700">
+        <p role="alert" className="text-danger-soft text-sm">
           {erro}
         </p>
       )}
 
+      <CadastroPeloExtrato
+        documento={d}
+        onConcluido={(atualizado) => setMensagem(atualizado.texto_agente ?? "Feito.")}
+      />
+
       {podeDecidir && (
         <div className="grid max-w-3xl gap-4 md:grid-cols-2">
-          <div className="space-y-2 rounded border border-zinc-200 p-3 text-sm">
-            <h2 className="font-semibold">Vincular a uma empresa</h2>
-            <p className="text-xs text-zinc-500">
+          <Painel className="space-y-2 p-3 text-sm">
+            <h2 className="font-display tracking-wide uppercase">Vincular a uma empresa</h2>
+            <p className="text-muted text-xs">
               Se houver receita do PA, ela é lançada só se a competência ainda não existir. A folha
               nunca é alterada.
             </p>
@@ -157,7 +171,7 @@ export default function DocumentoPage() {
               name="empresa"
               value={empresaId}
               onChange={(e) => setEmpresaId(e.target.value)}
-              className="block w-full rounded border border-zinc-300 px-2 py-1"
+              className={`block w-full px-2 py-1 ${classesCampo}`}
             >
               <option value="">Selecione</option>
               {empresas.data?.items.map((e) => (
@@ -166,33 +180,30 @@ export default function DocumentoPage() {
                 </option>
               ))}
             </select>
-            <button
-              type="button"
+            <Botao
               disabled={!empresaId}
               onClick={() => executar(() => vincularDocumento(d.id, empresaId))}
-              className="rounded bg-zinc-900 px-3 py-1.5 text-white disabled:opacity-50"
             >
               Vincular
-            </button>
-          </div>
-          <div className="space-y-2 rounded border border-zinc-200 p-3 text-sm">
-            <h2 className="font-semibold">Rejeitar</h2>
+            </Botao>
+          </Painel>
+          <Painel className="space-y-2 p-3 text-sm">
+            <h2 className="font-display tracking-wide uppercase">Rejeitar</h2>
             <input
               name="motivo"
               value={motivo}
               onChange={(e) => setMotivo(e.target.value)}
               placeholder="Motivo"
-              className="block w-full rounded border border-zinc-300 px-2 py-1"
+              className={`block w-full px-2 py-1 ${classesCampo}`}
             />
-            <button
-              type="button"
+            <Botao
+              variante="perigo"
               disabled={motivo.trim().length < 3}
               onClick={() => executar(() => rejeitarDocumento(d.id, motivo.trim()))}
-              className="rounded border border-red-300 px-3 py-1.5 text-red-800 disabled:opacity-50"
             >
               Rejeitar
-            </button>
-          </div>
+            </Botao>
+          </Painel>
         </div>
       )}
     </section>

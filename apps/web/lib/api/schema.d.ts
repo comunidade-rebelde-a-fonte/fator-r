@@ -346,6 +346,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/inbox/{document_id}/cadastrar-empresa": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Cadastrar Empresa Pelo Extrato
+     * @description Cadastra a empresa do extrato e vincula o documento, com confirmação do analista (M8).
+     */
+    post: operations["cadastrar_empresa_pelo_extrato_inbox__document_id__cadastrar_empresa_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/companies/{company_id}/simulations": {
     parameters: {
       query?: never;
@@ -434,6 +454,11 @@ export interface components {
     Body_enviar_extrato_inbox_pgdas_post: {
       /** Arquivo */
       arquivo: string;
+    };
+    /** CadastroPeloExtratoOut */
+    CadastroPeloExtratoOut: {
+      documento: components["schemas"]["DocumentoOut"];
+      empresa: components["schemas"]["CompanyOut"];
     };
     /** CarteiraOut */
     CarteiraOut: {
@@ -607,6 +632,7 @@ export interface components {
        * Format: date-time
        */
       criado_em: string;
+      sugestao_cadastro?: components["schemas"]["SugestaoCadastroOut"] | null;
     };
     /** EchoIn */
     EchoIn: {
@@ -777,6 +803,8 @@ export interface components {
       reforco_mensal_28: string | null;
       /** Reforco Mensal Meta */
       reforco_mensal_meta: string | null;
+      /** Meta Operacional */
+      meta_operacional: string;
       /** Economia 12M */
       economia_12m: string | null;
       /** Meses Faltantes */
@@ -1010,6 +1038,22 @@ export interface components {
       modelo: string | null;
       /** Custo */
       custo: number | null;
+    };
+    /**
+     * SugestaoCadastroOut
+     * @description Dados do extrato para pré-preencher o cadastro de uma empresa fora da carteira (M8).
+     */
+    SugestaoCadastroOut: {
+      /** Cnpj */
+      cnpj: string;
+      /** Cnpj Formatado */
+      cnpj_formatado: string;
+      /** Nome Empresarial */
+      nome_empresarial: string | null;
+      /** Sujeita Fator R */
+      sujeita_fator_r: boolean | null;
+      /** Inicio Atividade */
+      inicio_atividade?: string | null;
     };
     /** TraceDetalheOut */
     TraceDetalheOut: {
@@ -1771,6 +1815,41 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["DocumentoOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  cadastrar_empresa_pelo_extrato_inbox__document_id__cadastrar_empresa_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        document_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CompanyIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CadastroPeloExtratoOut"];
         };
       };
       /** @description Validation Error */

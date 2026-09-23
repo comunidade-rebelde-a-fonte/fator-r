@@ -2,13 +2,23 @@
 
 import { useState, type FormEvent } from "react";
 
+import { Botao } from "@/components/ui/Botao";
+import { classesCampo } from "@/components/ui/Campo";
 import { ApiError } from "@/lib/api";
 import type { CompanyIn, CompanyOut, Pacote } from "@/lib/api/types";
 import { cnpjValido, mascararCnpj } from "@/lib/cnpj";
 import { decimalParaEntradaBR, valorBRParaDecimal } from "@/lib/format";
 
+/** Valores iniciais: a ficha inteira (edição) ou parte dela (cadastro pelo extrato, M8). */
+export type ValoresIniciaisEmpresa = Partial<Omit<CompanyOut, "sujeita_fator_r">> & {
+  /** `null`: o analista precisa escolher antes de salvar. */
+  sujeita_fator_r?: boolean | null;
+};
+
 type Props = {
-  inicial?: CompanyOut;
+  inicial?: ValoresIniciaisEmpresa;
+  /** CNPJ travado: é a chave do vínculo com o extrato. */
+  cnpjSomenteLeitura?: boolean;
   rotuloSalvar: string;
   onSalvar: (dados: CompanyIn) => Promise<void>;
 };
@@ -21,12 +31,14 @@ function mensagemErro(error: unknown): string {
   return "Não foi possível salvar. Tente novamente.";
 }
 
-export function EmpresaForm({ inicial, rotuloSalvar, onSalvar }: Props) {
+export function EmpresaForm({ inicial, cnpjSomenteLeitura, rotuloSalvar, onSalvar }: Props) {
   const [nome, setNome] = useState(inicial?.nome ?? "");
   const [cnpj, setCnpj] = useState(inicial?.cnpj_formatado ?? "");
   const [cnae, setCnae] = useState(inicial?.cnae ?? "");
   const [atividade, setAtividade] = useState(inicial?.atividade ?? "");
-  const [sujeita, setSujeita] = useState(inicial?.sujeita_fator_r ?? true);
+  const [sujeita, setSujeita] = useState<boolean | null>(
+    inicial?.sujeita_fator_r === undefined ? true : inicial.sujeita_fator_r,
+  );
   const [qtdSocios, setQtdSocios] = useState(String(inicial?.qtd_socios ?? 1));
   const [contato, setContato] = useState(inicial?.contato ?? "");
   const [pacote, setPacote] = useState<Pacote | "">(inicial?.pacote ?? "");
@@ -42,6 +54,7 @@ export function EmpresaForm({ inicial, rotuloSalvar, onSalvar }: Props) {
     event.preventDefault();
     setErro(null);
     if (!cnpjValido(cnpj)) return setErro("CNPJ inválido.");
+    if (sujeita === null) return setErro("Informe se a atividade é sujeita a Fator R.");
     const honorarioDecimal = valorBRParaDecimal(honorario);
     if (honorarioDecimal === null) return setErro("Honorário inválido. Use o formato 1.234,56.");
     setSalvando(true);
@@ -66,7 +79,7 @@ export function EmpresaForm({ inicial, rotuloSalvar, onSalvar }: Props) {
     }
   }
 
-  const campo = "mt-1 block w-full rounded border border-zinc-300 px-2 py-1.5";
+  const campo = `mt-1 block w-full px-2 py-1.5 ${classesCampo}`;
   return (
     <form onSubmit={onSubmit} className="grid max-w-3xl grid-cols-2 gap-4 text-sm">
       <label className="col-span-2">
@@ -79,11 +92,12 @@ export function EmpresaForm({ inicial, rotuloSalvar, onSalvar }: Props) {
           required
           name="cnpj"
           value={cnpj}
+          readOnly={cnpjSomenteLeitura}
           onChange={(e) => setCnpj(mascararCnpj(e.target.value))}
           aria-invalid={cnpjComErro}
-          className={`${campo} ${cnpjComErro ? "border-red-500" : ""}`}
+          className={`${campo} ${cnpjSomenteLeitura ? "read-only:bg-panel read-only:text-muted" : ""}`}
         />
-        {cnpjComErro && <span className="text-xs text-red-700">CNPJ inválido</span>}
+        {cnpjComErro && <span className="text-danger-soft text-xs">CNPJ inválido</span>}
       </label>
       <label>
         CNAE
@@ -93,15 +107,31 @@ export function EmpresaForm({ inicial, rotuloSalvar, onSalvar }: Props) {
         Atividade
         <input value={atividade} onChange={(e) => setAtividade(e.target.value)} className={campo} />
       </label>
-      <label className="col-span-2 flex items-center gap-2">
-        <input
-          type="checkbox"
-          name="sujeita_fator_r"
-          checked={sujeita}
-          onChange={(e) => setSujeita(e.target.checked)}
-        />
-        Atividade sujeita a Fator R (entra na carteira)
-      </label>
+      <fieldset className="col-span-2">
+        <legend>Atividade sujeita a Fator R (entra na carteira)</legend>
+        <div className="mt-1 flex gap-4">
+          {[
+            { valor: true, rotulo: "Sim" },
+            { valor: false, rotulo: "Não" },
+          ].map((opcao) => (
+            <label key={opcao.rotulo} className="flex items-center gap-1">
+              <input
+                type="radio"
+                name="sujeita_fator_r"
+                value={String(opcao.valor)}
+                checked={sujeita === opcao.valor}
+                onChange={() => setSujeita(opcao.valor)}
+              />
+              {opcao.rotulo}
+            </label>
+          ))}
+        </div>
+        {sujeita === null && (
+          <span className="text-accent-soft text-xs">
+            O extrato não diz se a atividade é sujeita a Fator R. Escolha antes de salvar.
+          </span>
+        )}
+      </fieldset>
       <label>
         Início de atividade (mês)
         <input
@@ -156,18 +186,14 @@ export function EmpresaForm({ inicial, rotuloSalvar, onSalvar }: Props) {
         <textarea value={notas} onChange={(e) => setNotas(e.target.value)} className={campo} />
       </label>
       {erro && (
-        <p role="alert" className="col-span-2 text-red-700">
+        <p role="alert" className="text-danger-soft col-span-2">
           {erro}
         </p>
       )}
       <div className="col-span-2">
-        <button
-          type="submit"
-          disabled={salvando}
-          className="rounded bg-zinc-900 px-4 py-2 text-white disabled:opacity-60"
-        >
+        <Botao type="submit" tamanho="lg" disabled={salvando || sujeita === null}>
           {salvando ? "Salvando..." : rotuloSalvar}
-        </button>
+        </Botao>
       </div>
     </form>
   );
