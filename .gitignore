@@ -5,6 +5,16 @@
 infra/**/.env
 !infra/**/.env.example
 
+# Chaves e certificados (inclui certificado digital A1)
+*.pem
+*.key
+*.pfx
+*.p12
+
+# Logs
+*.log
+logs/
+
 # Dados locais (uploads, dumps, backups)
 /data/
 *.dump
