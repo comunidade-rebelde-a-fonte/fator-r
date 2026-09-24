@@ -9,7 +9,9 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, ConfigDict, Field
 
 from fator_r.agents import parser_pgdas
+from fator_r.api.companies import CompanyIn, CompanyOut, dados_empresa
 from fator_r.api.deps import CurrentUser, FirmSession
+from fator_r.core.cnpj import formatar_cnpj
 from fator_r.core.settings import get_settings
 from fator_r.core.uploads import ArquivoGrandeDemais, ArquivoInvalido, receber
 from fator_r.repositories import companies
@@ -20,6 +22,26 @@ router = APIRouter(prefix="/inbox", tags=["inbox PGDAS-D"])
 
 StatusDocumento = Literal["received", "parsed", "needs_review", "linked", "rejected"]
 NAO_ENCONTRADO = "Documento não encontrado"
+
+
+class SugestaoCadastroOut(BaseModel):
+    """Dados do extrato para pré-preencher o cadastro de uma empresa fora da carteira (M8)."""
+
+    cnpj: str
+    cnpj_formatado: str
+    nome_empresarial: str | None
+    sujeita_fator_r: bool | None
+    inicio_atividade: str | None = None  # "YYYY-MM" da data de abertura no CNPJ
+
+    @classmethod
+    def de(cls, s: parser_pgdas.SugestaoCadastro) -> "SugestaoCadastroOut":
+        return cls(
+            cnpj=s.cnpj,
+            cnpj_formatado=formatar_cnpj(s.cnpj),
+            nome_empresarial=s.nome_empresarial,
+            sujeita_fator_r=s.sujeita_fator_r,
+            inicio_atividade=s.inicio_atividade,
+        )
 
 
 class DocumentoOut(BaseModel):
@@ -36,9 +58,11 @@ class DocumentoOut(BaseModel):
     parser_version: str | None
     trace_id: str
     criado_em: datetime
+    sugestao_cadastro: SugestaoCadastroOut | None = None
 
     @classmethod
     def de(cls, d: PgdasDocument, texto_agente: str | None = None) -> "DocumentoOut":
+        sugestao = parser_pgdas.sugestao_cadastro(d)
         return cls(
             id=d.id,
             texto_agente=texto_agente,
@@ -53,6 +77,7 @@ class DocumentoOut(BaseModel):
             parser_version=d.parser_version,
             trace_id=d.trace_id,
             criado_em=d.criado_em,
+            sugestao_cadastro=SugestaoCadastroOut.de(sugestao) if sugestao else None,
         )
 
 
@@ -177,3 +202,57 @@ async def rejeitar_documento(
     except parser_pgdas.DocumentoEmEstadoInvalido as exc:
         raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
     return DocumentoOut.de(resultado.documento, resultado.texto)
+
+
+class CadastroPeloExtratoOut(BaseModel):
+    documento: DocumentoOut
+    empresa: CompanyOut
+
+
+def _erro(status_code: int, codigo: str, mensagem: str, **extra: object) -> HTTPException:
+    """Erro com `detail.codigo`, para o front distinguir os dois 409 desta rota."""
+    return HTTPException(status_code, {"codigo": codigo, "mensagem": mensagem, **extra})
+
+
+@router.post(
+    "/{document_id}/cadastrar-empresa",
+    response_model=CadastroPeloExtratoOut,
+    status_code=status.HTTP_201_CREATED,
+)
+async def cadastrar_empresa_pelo_extrato(
+    document_id: uuid.UUID, payload: CompanyIn, user: CurrentUser, session: FirmSession
+) -> CadastroPeloExtratoOut:
+    """Cadastra a empresa do extrato e vincula o documento, com confirmação do analista (M8)."""
+    documento = await documento_do_escritorio(session, user.firm_id, document_id)
+    try:
+        resultado, empresa = await parser_pgdas.cadastrar_e_vincular(
+            session, user, documento, dados_empresa(payload, exclude_unset=False)
+        )
+    except parser_pgdas.DocumentoEmEstadoInvalido as exc:
+        raise _erro(status.HTTP_409_CONFLICT, "documento_em_estado_invalido", str(exc)) from exc
+    except parser_pgdas.CnpjJaCadastrado as exc:
+        raise _erro(
+            status.HTTP_409_CONFLICT,
+            "cnpj_ja_cadastrado",
+            str(exc),
+            company_id=str(exc.company_id),
+        ) from exc
+    except companies.CnpjDuplicado as exc:
+        # Corrida no UNIQUE (firm_id, cnpj): o tracer já desfez tudo e gravou o trace de erro.
+        vencedora = await companies.obter_por_cnpj(session, user.firm_id, payload.cnpj)
+        raise _erro(
+            status.HTTP_409_CONFLICT,
+            "cnpj_ja_cadastrado",
+            "CNPJ já cadastrado neste escritório",
+            company_id=str(vencedora.id) if vencedora else None,
+        ) from exc
+    except parser_pgdas.ExtratoSemCnpjValido as exc:
+        raise _erro(
+            status.HTTP_422_UNPROCESSABLE_CONTENT, "extrato_sem_cnpj_valido", str(exc)
+        ) from exc
+    except parser_pgdas.CnpjDivergente as exc:
+        raise _erro(status.HTTP_422_UNPROCESSABLE_CONTENT, "cnpj_divergente", str(exc)) from exc
+    return CadastroPeloExtratoOut(
+        documento=DocumentoOut.de(resultado.documento, resultado.texto),
+        empresa=CompanyOut.de(empresa),
+    )

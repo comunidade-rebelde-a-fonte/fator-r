@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 export function Carregando({ texto = "Carregando..." }: { texto?: string }) {
   return (
-    <p role="status" className="py-6 text-sm text-zinc-500">
+    <p role="status" className="text-muted py-6 text-sm">
       {texto}
     </p>
   );
@@ -10,7 +10,7 @@ export function Carregando({ texto = "Carregando..." }: { texto?: string }) {
 
 export function Vazio({ children }: { children: ReactNode }) {
   return (
-    <div className="rounded border border-dashed border-zinc-300 p-6 text-center text-sm text-zinc-500">
+    <div className="border-line-strong/60 text-muted rounded-[10px] border border-dashed p-6 text-center text-sm">
       {children}
     </div>
   );
@@ -20,7 +20,7 @@ export function Erro({ texto, onRetry }: { texto: string; onRetry?: () => void }
   return (
     <div
       data-testid="estado-erro"
-      className="rounded border border-red-200 bg-red-50 p-4 text-sm text-red-800"
+      className="border-danger/50 bg-danger/12 text-danger-soft rounded-[10px] border p-4 text-sm"
     >
       {texto}{" "}
       {onRetry && (

@@ -285,6 +285,45 @@ Performance da carteira: uma consulta que carrega os movimentos da janela de tod
 
 Formato e regras em `CLAUDE.md` §9. Entradas mais recentes no topo.
 
+### 2026-09-22 — Grade mensal: folha do PGDAS-D numa célula única
+- Contexto: no teste manual, as linhas vindas do extrato mostravam a folha em "Salários + 13º/férias" e 0,00 em pró-labore, CPP e FGTS, campos que o PGDAS-D não tem.
+- Decisão: só a tela. Em linhas `origem=pgdas`, as quatro colunas de folha viram uma célula "Folha declarada no PGDAS-D: R$ X" (ou "Folha não informada no extrato"), com "Detalhar folha" para abrir os campos; salvar a linha a torna manual, como antes. O dado continua em `salarios` (§3.8) e o motor não muda. Alternativas rejeitadas: coluna `folha_declarada` no banco (migração + mudança no motor) e folha única para todos (conflita com §3.6/§3.7).
+- Aprovado por: Alfredo (opção "Só a tela")
+- Impacto: T-810, `apps/web/components/empresas/GradeMensal.tsx`.
+
+### 2026-09-22 — Carteira: aumento de folha rotulado
+- Contexto: no teste manual, a célula "Reforço mensal (28% · meta)" mostrava "R$ 966,67 · R$ 1.166,67" sem dizer o que era cada número.
+- Decisão: coluna "Aumento de folha por mês", com duas linhas rotuladas ("+ R$ X para chegar a 28% (Anexo III)" e "+ R$ Y para a meta de N%"); "já atinge 28%" e "já na meta" quando o valor é zero. Os valores continuam vindo do motor (`reforco_mensal_28` e `reforco_mensal_meta`); o front só rotula. A meta vem do escritório (`meta_operacional` por linha em `/portfolio`), nunca fixa em 30% na tela.
+- Aprovado por: Alfredo (escolheu a opção "Aumento rotulado")
+- Impacto: T-809, `api/portfolio.py`, `apps/web/app/(app)/carteira/page.tsx`.
+
+### 2026-09-22 — Extrato passa a lançar os 12 meses anteriores (receita e folha) — altera a regra §3.8
+- Contexto: ao testar o M8, o usuário importou o extrato e só a competência do PA foi lançada, embora o extrato traga as tabelas "Receitas Brutas Anteriores" e "Folha de Salários Anteriores" dos 12 meses da janela. Opções apresentadas: só receitas (recomendada), receitas e folha, ou manter. Riscos informados: a folha do extrato é um total e o sistema guarda pró-labore, salários, CPP e FGTS separados (§3.6, §3.8).
+- Decisão (escolha do usuário: receitas **e** folha):
+  - com as tabelas no extrato, grava os meses PA−12 a PA−1, só em competências vazias, nunca sobrescreve, `origem=pgdas`, em todos os caminhos de vínculo (automático, manual e cadastro pelo extrato);
+  - só grava série que confere: meses = janela do PA e soma = RBT12 / FS12 declarados (tolerância R$ 0,01); se não conferir, nada dos meses anteriores é gravado e o motivo vai para a decisão e para o texto;
+  - folha declarada inteira no campo `salarios`, com pró-labore, CPP e FGTS zerados e observação "total declarado no PGDAS-D, sem divisão". Não se inventa rateio. Com CPP zerada, a política de CPP do escritório não soma nada a esses meses e a FS12 fica igual à declarada;
+  - atividade que o extrato diz não ter fator r: folha zero; sujeita ao fator r (ou indeterminada) sem folha conferida: nenhum mês anterior é gravado, para não criar folha zero falsa;
+  - para conferir as tabelas, o parser (`2026.09.3`) passou a ler RBT12 e "Total FS12" no layout declaratório; as lacunas desses dois campos saíram das fixtures (resta o DAS → T-504);
+  - data de abertura no CNPJ pré-preenche o início de atividade no cadastro pelo extrato (editável).
+- Consequência aceita: empresa com meses `origem=pgdas` na janela fica com a nota ouro indisponível (§3.16), porque o parser não pode ser avaliado contra o que ele mesmo lançou.
+- Aprovado por: Alfredo (resposta à pergunta de 2026-09-22)
+- Impacto: `CLAUDE.md` §3.8, PRD §7.6 (v0.3), `parsing/pgdas.py`, `agents/parser_pgdas.py`, `api/inbox.py`, web (cadastro pelo extrato), fixtures `pdf_declaratorio_*`, T-808.
+
+### 2026-09-22 — M8: cadastro de empresa a partir do extrato PGDAS-D
+- Contexto: extrato de CNPJ fora da carteira parava em `needs_review` (`cnpj_nao_encontrado`) e obrigava o analista a cadastrar a empresa em outra tela e voltar para vincular. Especificação completa em `.claude/sdd/archive/CADASTRO_EMPRESA_PELO_EXTRATO/`.
+- Decisão:
+  - cadastro **só com confirmação humana**, em um clique a partir do inbox e do resultado do upload; a §3.9 continua valendo (nenhuma escrita automática para CNPJ desconhecido);
+  - casamento continua por CNPJ exato de 14 dígitos; sem casamento por raiz, sem consulta de CNPJ em serviço externo (§5.3) e sem CNPJ editável no formulário;
+  - endpoint único `POST /inbox/{id}/cadastrar-empresa`: pré-checagens (estado, CNPJ lido válido, CNPJ igual ao lido, CNPJ ainda não cadastrado) fora do trace; criação da empresa (`companies.adicionar`, sem commit), vínculo, receita do PA (§3.8 inalterada) e decisão numa transação só, dentro de `tracer.run(gatilho="cadastro_pelo_extrato")`;
+  - parser (`PARSER_VERSION 2026.09.2`) lê nome empresarial e sugere `sujeita_fator_r` pela linha do fator r (número → sim; "não se aplica" → não; senão, sem sugestão). Ambos ficam **fora** da confiança e da nota ouro;
+  - parser lê o PA no formato de intervalo (`01/08/2026 a 31/08/2026`) só quando início e fim são do mesmo mês; RBT12, FS12 e DAS desse layout ficam para a T-504;
+  - anexo passa a ser lido primeiro de linha estruturada (`Fator r`, `Enquadramento`, `Atividade`), para não pegar "Anexo III" de parágrafo explicativo (sinalizado ao usuário como acréscimo de escopo);
+  - fixtures do layout declaratório guardam o valor verdadeiro e declaram `lacunas_conhecidas`; para esses campos o teste exige `None`;
+  - na web, o Fator R do formulário de empresa passa de checkbox para Sim/Não em todas as telas (padrão continua "Sim").
+- Aprovado por: Alfredo (respostas no brainstorm e no define; pediu o build do design)
+- Impacto: `docs/tasks.md` (M8, T-801..T-807), PRD §7.6, `parsing/pgdas.py`, `agents/parser_pgdas.py`, `repositories/companies.py`, `api/inbox.py`, `apps/web` (inbox e formulário de empresa), fixtures `pdf_declaratorio_*`.
+
 ### 2026-09-17 — Revisão de segurança final (M7) e riscos aceitos
 - Contexto: segunda revisão por subagente (sem commits para o `/security-review`). Nenhum achado alto; as correções do M5 foram confirmadas como efetivas.
 - Decisão: corrigidos M2 (validador do render: números por extenso, sinal, números colados em letra, veredito contraditório), M3 (o `plan` envia só a mensagem ao Anthropic; a empresa é resolvida localmente; o `render` recebe só a decisão calculada, sem CNPJ), B1 (PA inválido vindo do LLM é descartado), B2 (senhas de ClickHouse e Redis fora da linha de comando), B3 (`trap` de limpeza no teste de restore), B4 (`AUTH_DISABLE_SIGNUP` no Langfuse), B5 (no máximo 2 extrações de PDF simultâneas) e B7 (máscara de CPF e CNPJ com espaços). Também T-703: FKs compostas por firm_id, CSRF por Origin, headers e CSP.

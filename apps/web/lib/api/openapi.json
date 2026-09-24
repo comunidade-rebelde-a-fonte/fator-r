@@ -1079,6 +1079,58 @@
         }
       }
     },
+    "/inbox/{document_id}/cadastrar-empresa": {
+      "post": {
+        "tags": ["inbox PGDAS-D"],
+        "summary": "Cadastrar Empresa Pelo Extrato",
+        "description": "Cadastra a empresa do extrato e vincula o documento, com confirmação do analista (M8).",
+        "operationId": "cadastrar_empresa_pelo_extrato_inbox__document_id__cadastrar_empresa_post",
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Document Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanyIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CadastroPeloExtratoOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/companies/{company_id}/simulations": {
       "post": {
         "tags": ["simulador"],
@@ -1336,6 +1388,19 @@
         "type": "object",
         "required": ["arquivo"],
         "title": "Body_enviar_extrato_inbox_pgdas_post"
+      },
+      "CadastroPeloExtratoOut": {
+        "properties": {
+          "documento": {
+            "$ref": "#/components/schemas/DocumentoOut"
+          },
+          "empresa": {
+            "$ref": "#/components/schemas/CompanyOut"
+          }
+        },
+        "type": "object",
+        "required": ["documento", "empresa"],
+        "title": "CadastroPeloExtratoOut"
       },
       "CarteiraOut": {
         "properties": {
@@ -1928,6 +1993,16 @@
             "type": "string",
             "format": "date-time",
             "title": "Criado Em"
+          },
+          "sugestao_cadastro": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SugestaoCadastroOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",
@@ -2479,6 +2554,11 @@
             ],
             "title": "Reforco Mensal Meta"
           },
+          "meta_operacional": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Meta Operacional"
+          },
           "economia_12m": {
             "anyOf": [
               {
@@ -2517,6 +2597,7 @@
           "fs12",
           "reforco_mensal_28",
           "reforco_mensal_meta",
+          "meta_operacional",
           "economia_12m",
           "meses_faltantes"
         ],
@@ -3210,6 +3291,55 @@
           "custo"
         ],
         "title": "SpanOut"
+      },
+      "SugestaoCadastroOut": {
+        "properties": {
+          "cnpj": {
+            "type": "string",
+            "title": "Cnpj"
+          },
+          "cnpj_formatado": {
+            "type": "string",
+            "title": "Cnpj Formatado"
+          },
+          "nome_empresarial": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nome Empresarial"
+          },
+          "sujeita_fator_r": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sujeita Fator R"
+          },
+          "inicio_atividade": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inicio Atividade"
+          }
+        },
+        "type": "object",
+        "required": ["cnpj", "cnpj_formatado", "nome_empresarial", "sujeita_fator_r"],
+        "title": "SugestaoCadastroOut",
+        "description": "Dados do extrato para pré-preencher o cadastro de uma empresa fora da carteira (M8)."
       },
       "TraceDetalheOut": {
         "properties": {

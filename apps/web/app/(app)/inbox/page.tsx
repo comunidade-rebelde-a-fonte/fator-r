@@ -4,12 +4,22 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRef, useState, type DragEvent } from "react";
 
+import { CadastroPeloExtrato } from "@/components/inbox/CadastroPeloExtrato";
 import { STATUS_DOCUMENTO, StatusDocumentoBadge } from "@/components/inbox/StatusDocumentoBadge";
+import { classesBotao } from "@/components/ui/Botao";
 import { Carregando, Erro, Vazio } from "@/components/ui/Estado";
+import { CabecalhoTabela, Tabela } from "@/components/ui/Tabela";
+import { TituloPagina } from "@/components/ui/TituloPagina";
 import { ApiError } from "@/lib/api";
 import { enviarExtrato, listarDocumentos } from "@/lib/api/inbox";
 import type { DocumentoOut, StatusDocumento } from "@/lib/api/types";
 import { formatarPercentual } from "@/lib/format";
+
+function classesFiltro(ativo: boolean): string {
+  return `rounded-[4px] border px-2 py-1 transition-colors ${
+    ativo ? "border-accent/60 bg-accent/12 text-fg" : "border-line-strong text-muted hover:text-fg"
+  }`;
+}
 
 function mensagemUpload(error: unknown): string {
   if (error instanceof ApiError) {
@@ -59,7 +69,7 @@ export default function InboxPage() {
 
   return (
     <section className="space-y-4">
-      <h1 className="text-xl font-semibold">Inbox PGDAS-D</h1>
+      <TituloPagina>Inbox PGDAS-D</TituloPagina>
 
       <div
         data-testid="dropzone"
@@ -69,12 +79,12 @@ export default function InboxPage() {
         }}
         onDragLeave={() => setArrastando(false)}
         onDrop={onDrop}
-        className={`rounded border-2 border-dashed p-6 text-center text-sm ${
-          arrastando ? "border-sky-500 bg-sky-50" : "border-zinc-300"
+        className={`rounded-[10px] border-2 border-dashed p-6 text-center text-sm transition-colors ${
+          arrastando ? "border-accent bg-accent/8" : "border-line-strong/60 bg-panel"
         }`}
       >
         <p>Arraste o extrato do PGDAS-D (PDF ou TXT) ou</p>
-        <label className="mt-2 inline-block cursor-pointer rounded bg-zinc-900 px-3 py-1.5 text-white">
+        <label className={classesBotao("primario", "md", "mt-2 cursor-pointer")}>
           escolha o arquivo
           <input
             ref={input}
@@ -86,9 +96,9 @@ export default function InboxPage() {
             onChange={(e) => void enviar(e.target.files)}
           />
         </label>
-        {enviando && <p className="mt-2 text-zinc-500">Enviando e lendo o extrato...</p>}
+        {enviando && <p className="text-muted mt-2">Enviando e lendo o extrato...</p>}
         {erro && (
-          <p role="alert" className="mt-2 text-red-700">
+          <p role="alert" className="text-danger-soft mt-2">
             {erro}
           </p>
         )}
@@ -102,11 +112,15 @@ export default function InboxPage() {
         )}
       </div>
 
+      {ultimo && !enviando && (
+        <CadastroPeloExtrato key={ultimo.id} documento={ultimo} onConcluido={setUltimo} />
+      )}
+
       <div className="flex flex-wrap gap-2 text-sm">
         <button
           type="button"
           onClick={() => setFiltro("")}
-          className={`rounded border px-2 py-1 ${filtro === "" ? "bg-zinc-900 text-white" : ""}`}
+          className={classesFiltro(filtro === "")}
         >
           Todos
         </button>
@@ -116,7 +130,7 @@ export default function InboxPage() {
             type="button"
             data-filtro={s}
             onClick={() => setFiltro(s)}
-            className={`rounded border px-2 py-1 ${filtro === s ? "bg-zinc-900 text-white" : ""}`}
+            className={classesFiltro(filtro === s)}
           >
             {STATUS_DOCUMENTO[s].rotulo} ({contagem[s] ?? 0})
           </button>
@@ -131,8 +145,8 @@ export default function InboxPage() {
         <Vazio>Nenhum extrato nesta situação.</Vazio>
       )}
       {documentos.isSuccess && documentos.data.items.length > 0 && (
-        <table className="w-full text-left text-sm" data-testid="tabela-inbox">
-          <thead className="border-b text-xs text-zinc-500 uppercase">
+        <Tabela data-testid="tabela-inbox">
+          <CabecalhoTabela>
             <tr>
               <th className="py-2">Recebido em</th>
               <th>Arquivo</th>
@@ -142,7 +156,7 @@ export default function InboxPage() {
               <th>Motivo</th>
               <th className="text-right">Confiança</th>
             </tr>
-          </thead>
+          </CabecalhoTabela>
           <tbody>
             {documentos.data.items.map((d) => (
               <tr key={d.id} className="border-b last:border-0" data-documento={d.id}>
@@ -157,12 +171,12 @@ export default function InboxPage() {
                 <td>
                   <StatusDocumentoBadge status={d.status} />
                 </td>
-                <td className="text-xs text-zinc-600">{d.motivo ?? ""}</td>
+                <td className="text-muted text-xs">{d.motivo ?? ""}</td>
                 <td className="text-right">{formatarPercentual(d.confianca)}</td>
               </tr>
             ))}
           </tbody>
-        </table>
+        </Tabela>
       )}
     </section>
   );

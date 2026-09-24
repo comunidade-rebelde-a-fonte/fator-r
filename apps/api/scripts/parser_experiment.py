@@ -73,7 +73,11 @@ def main() -> None:
             id=f"pgdas-{pasta.name}",
             input={"fixture": pasta.name},
             expected_output={"campos": esperado["campos"]},
-            metadata={"sintetica": esperado.get("sintetica", True)},
+            metadata={
+                "sintetica": esperado.get("sintetica", True),
+                # Campos que o documento tem e o parser ainda não lê: contam como erro.
+                "lacunas_conhecidas": sorted(esperado.get("lacunas_conhecidas", {})),
+            },
         )
     dataset = langfuse.get_dataset(DATASET)
     carimbo = datetime.now(UTC).strftime("%Y%m%dT%H%M%S")

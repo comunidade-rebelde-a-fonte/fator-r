@@ -4,7 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { SemaforoBadge } from "@/components/fator-r/SemaforoBadge";
+import { Botao } from "@/components/ui/Botao";
+import { classesCampo } from "@/components/ui/Campo";
 import { Carregando, Erro } from "@/components/ui/Estado";
+import { Painel } from "@/components/ui/Painel";
 import { ApiError } from "@/lib/api";
 import { obterFatorR } from "@/lib/api/companies";
 import type { FatorROut } from "@/lib/api/types";
@@ -25,12 +28,12 @@ const MOTIVOS: Record<NonNullable<FatorROut["motivo"]>, string> = {
 
 function Card({ titulo, valor, testid }: { titulo: string; valor: string; testid?: string }) {
   return (
-    <div className="rounded border border-zinc-200 p-3">
-      <div className="text-xs text-zinc-500">{titulo}</div>
-      <div className="mt-1 text-lg font-semibold" data-testid={testid}>
+    <Painel className="p-3">
+      <div className="text-muted text-[11px] tracking-[.1em] uppercase">{titulo}</div>
+      <div className="font-display mt-1 text-2xl" data-testid={testid}>
         {valor}
       </div>
-    </div>
+    </Painel>
   );
 }
 
@@ -44,30 +47,22 @@ export function PainelFatorR({ companyId }: { companyId: string }) {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2 text-sm">
-        <label className="flex items-center gap-2">
+        <label className="text-muted flex items-center gap-2">
           Período de apuração (PA)
           <input
             type="month"
             name="pa"
             value={pa}
             onChange={(e) => e.target.value && setPa(e.target.value)}
-            className="rounded border border-zinc-300 px-2 py-1"
+            className={`px-2 py-1 ${classesCampo}`}
           />
         </label>
-        <button
-          type="button"
-          onClick={() => setPa(somarMeses(pa, -1))}
-          className="rounded border px-2 py-1"
-        >
+        <Botao variante="fantasma" tamanho="sm" onClick={() => setPa(somarMeses(pa, -1))}>
           ← PA anterior
-        </button>
-        <button
-          type="button"
-          onClick={() => setPa(somarMeses(pa, 1))}
-          className="rounded border px-2 py-1"
-        >
+        </Botao>
+        <Botao variante="fantasma" tamanho="sm" onClick={() => setPa(somarMeses(pa, 1))}>
           PA seguinte →
-        </button>
+        </Botao>
       </div>
 
       {resultado.isPending && <Carregando />}
@@ -98,10 +93,10 @@ function Resultado({ r }: { r: FatorROut }) {
         <span data-testid="janela">
           Janela: {rotuloCompetencia(r.janela_inicio)} a {rotuloCompetencia(r.janela_fim)}
         </span>
-        <span className="text-zinc-500" data-testid="politica-cpp">
+        <span className="text-muted" data-testid="politica-cpp">
           Política do escritório: CPP do DAS {r.cpp_integra_fs12 ? "integra" : "não integra"} a FS12
         </span>
-        <span className="text-zinc-500" data-testid="vigencia-tabela">
+        <span className="text-muted" data-testid="vigencia-tabela">
           Tabelas do Simples vigentes desde{" "}
           {r.tabela_vigencia_inicio.split("-").reverse().join("/")}
         </span>
@@ -115,16 +110,16 @@ function Resultado({ r }: { r: FatorROut }) {
               ? "preenchido"
               : "fora";
           const cor = {
-            faltante: "bg-red-100 text-red-800",
-            preenchido: "bg-emerald-100 text-emerald-800",
-            fora: "bg-zinc-100 text-zinc-500",
+            faltante: "border-danger/50 bg-danger/12 text-danger-soft",
+            preenchido: "border-ok/40 bg-ok/12 text-ok",
+            fora: "border-line bg-panel-2 text-muted",
           }[situacao];
           return (
             <span
               key={m}
               data-mes={m}
               data-situacao={situacao}
-              className={`rounded px-2 py-0.5 text-xs ${cor}`}
+              className={`rounded-[4px] border px-2 py-0.5 text-xs ${cor}`}
             >
               {rotuloCompetencia(m)}
               {situacao === "faltante" ? " · faltante" : ""}
@@ -136,7 +131,7 @@ function Resultado({ r }: { r: FatorROut }) {
       {r.status === "dados_insuficientes" && r.motivo && (
         <div
           data-testid="dados-insuficientes"
-          className="rounded border border-zinc-300 bg-zinc-50 p-3 text-sm"
+          className="border-line-strong/60 bg-panel-2 rounded-[10px] border p-3 text-sm"
         >
           <strong>Dados insuficientes.</strong> {MOTIVOS[r.motivo]}
         </div>

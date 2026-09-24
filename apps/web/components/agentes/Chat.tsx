@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { useState, type FormEvent, type ReactNode } from "react";
 
+import { Botao } from "@/components/ui/Botao";
+import { classesCampo } from "@/components/ui/Campo";
+import { Painel } from "@/components/ui/Painel";
 import type { RespostaAgente } from "@/lib/api/types";
 
 type Mensagem = { autor: "analista" | "agente"; texto: string; resposta?: RespostaAgente };
@@ -44,14 +47,16 @@ export function Chat({
   }
 
   return (
-    <div className="space-y-3 rounded border border-zinc-200 p-3 text-sm" data-testid={testid}>
-      <h2 className="font-semibold">{titulo}</h2>
+    <Painel className="space-y-3 p-3 text-sm" data-testid={testid}>
+      <h2 className="font-display text-lg tracking-wide uppercase">{titulo}</h2>
       <div className="max-h-[32rem] space-y-2 overflow-y-auto">
         {mensagens.map((m, i) => (
           <div
             key={i}
             data-autor={m.autor}
-            className={`rounded p-2 ${m.autor === "analista" ? "bg-zinc-100" : "bg-sky-50"}`}
+            className={`rounded-[4px] border p-2 ${
+              m.autor === "analista" ? "border-accent/25 bg-accent/8" : "border-line bg-panel-2"
+            }`}
           >
             <p className="whitespace-pre-line">{m.texto}</p>
             {m.resposta && (
@@ -69,13 +74,13 @@ export function Chat({
           </div>
         ))}
         {pensando && (
-          <p role="status" className="text-zinc-500">
+          <p role="status" className="text-muted">
             Pensando...
           </p>
         )}
       </div>
       {erro && (
-        <p role="alert" className="text-red-700">
+        <p role="alert" className="text-danger-soft">
           {erro}
         </p>
       )}
@@ -85,16 +90,12 @@ export function Chat({
           value={texto}
           onChange={(e) => setTexto(e.target.value)}
           placeholder={placeholder}
-          className="flex-1 rounded border border-zinc-300 px-2 py-1.5"
+          className={`flex-1 px-2 py-1.5 ${classesCampo}`}
         />
-        <button
-          type="submit"
-          disabled={pensando}
-          className="rounded bg-zinc-900 px-3 py-1.5 text-white disabled:opacity-60"
-        >
+        <Botao type="submit" disabled={pensando}>
           Enviar
-        </button>
+        </Botao>
       </form>
-    </div>
+    </Painel>
   );
 }

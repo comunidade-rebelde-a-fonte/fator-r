@@ -6,7 +6,11 @@ import { useState } from "react";
 
 import { PacoteBadge } from "@/components/empresas/Badges";
 import { Badge } from "@/components/ui/Badge";
+import { classesBotao } from "@/components/ui/Botao";
+import { classesCampo } from "@/components/ui/Campo";
 import { Carregando, Erro, Vazio } from "@/components/ui/Estado";
+import { CabecalhoTabela, Tabela } from "@/components/ui/Tabela";
+import { TituloPagina } from "@/components/ui/TituloPagina";
 import { listarEmpresas } from "@/lib/api/companies";
 import { formatarReais } from "@/lib/format";
 
@@ -25,42 +29,45 @@ export default function EmpresasPage() {
 
   return (
     <section className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Empresas</h1>
-        <Link href="/empresas/nova" className="rounded bg-zinc-900 px-3 py-1.5 text-sm text-white">
-          Nova empresa
-        </Link>
-      </div>
+      <TituloPagina
+        acoes={
+          <Link href="/empresas/nova" className={classesBotao()}>
+            Nova empresa
+          </Link>
+        }
+      >
+        Empresas
+      </TituloPagina>
 
       <div className="flex flex-wrap items-end gap-3 text-sm">
-        <label>
+        <label className="text-muted">
           Buscar
           <input
             aria-label="Buscar por nome ou CNPJ"
             placeholder="Nome ou CNPJ"
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            className="mt-1 block rounded border border-zinc-300 px-2 py-1"
+            className={`mt-1 block px-2 py-1 ${classesCampo}`}
           />
         </label>
-        <label>
+        <label className="text-muted">
           Situação
           <select
             value={ativo}
             onChange={(e) => setAtivo(e.target.value as Opcao)}
-            className="mt-1 block rounded border border-zinc-300 px-2 py-1"
+            className={`mt-1 block px-2 py-1 ${classesCampo}`}
           >
             <option value="sim">Ativas</option>
             <option value="nao">Inativas</option>
             <option value="todas">Todas</option>
           </select>
         </label>
-        <label>
+        <label className="text-muted">
           Sujeita a Fator R
           <select
             value={sujeita}
             onChange={(e) => setSujeita(e.target.value as Opcao)}
-            className="mt-1 block rounded border border-zinc-300 px-2 py-1"
+            className={`mt-1 block px-2 py-1 ${classesCampo}`}
           >
             <option value="todas">Todas</option>
             <option value="sim">Sim</option>
@@ -77,8 +84,8 @@ export default function EmpresasPage() {
         <Vazio>Nenhuma empresa encontrada com esses filtros.</Vazio>
       )}
       {empresas.isSuccess && empresas.data.items.length > 0 && (
-        <table className="w-full text-left text-sm">
-          <thead className="border-b text-xs text-zinc-500 uppercase">
+        <Tabela>
+          <CabecalhoTabela>
             <tr>
               <th className="py-2">Empresa</th>
               <th>CNPJ</th>
@@ -87,7 +94,7 @@ export default function EmpresasPage() {
               <th className="text-right">Honorário</th>
               <th>Situação</th>
             </tr>
-          </thead>
+          </CabecalhoTabela>
           <tbody>
             {empresas.data.items.map((e) => (
               <tr key={e.id} className="border-b last:border-0">
@@ -108,7 +115,7 @@ export default function EmpresasPage() {
               </tr>
             ))}
           </tbody>
-        </table>
+        </Tabela>
       )}
     </section>
   );

@@ -6,18 +6,22 @@ import { useState } from "react";
 
 import { StatusTraceBadge } from "@/components/observabilidade/StatusTraceBadge";
 import { Badge } from "@/components/ui/Badge";
+import { classesCampo } from "@/components/ui/Campo";
 import { Carregando, Erro, Vazio } from "@/components/ui/Estado";
+import { Painel } from "@/components/ui/Painel";
+import { CabecalhoTabela, Tabela } from "@/components/ui/Tabela";
+import { TituloPagina } from "@/components/ui/TituloPagina";
 import { listarTraces, obterResumo } from "@/lib/api/observability";
 import { formatarPercentual } from "@/lib/format";
 
 function Card({ titulo, valor, testid }: { titulo: string; valor: string; testid: string }) {
   return (
-    <div className="rounded border border-zinc-200 p-3">
-      <div className="text-xs text-zinc-500">{titulo}</div>
-      <div className="mt-1 text-xl font-semibold" data-testid={testid}>
+    <Painel className="p-3">
+      <div className="text-muted text-[11px] tracking-[.1em] uppercase">{titulo}</div>
+      <div className="font-display mt-1 text-2xl" data-testid={testid}>
         {valor}
       </div>
-    </div>
+    </Painel>
   );
 }
 
@@ -34,7 +38,7 @@ export default function ObservabilidadePage() {
 
   return (
     <section className="space-y-6">
-      <h1 className="text-xl font-semibold">Observabilidade dos agentes</h1>
+      <TituloPagina>Observabilidade dos agentes</TituloPagina>
 
       {resumo.isPending && <Carregando />}
       {resumo.isError && (
@@ -72,12 +76,12 @@ export default function ObservabilidadePage() {
           </div>
 
           <div>
-            <h2 className="mb-2 font-semibold">Por agente</h2>
+            <h2 className="font-display mb-2 text-lg tracking-wide uppercase">Por agente</h2>
             {resumo.data.por_agente.length === 0 ? (
               <Vazio>Nenhuma corrida de agente ainda.</Vazio>
             ) : (
-              <table className="w-full text-left text-sm" data-testid="tabela-agentes">
-                <thead className="border-b text-xs text-zinc-500 uppercase">
+              <Tabela data-testid="tabela-agentes">
+                <CabecalhoTabela>
                   <tr>
                     <th className="py-2">Agente</th>
                     <th className="text-right">Volume</th>
@@ -86,7 +90,7 @@ export default function ObservabilidadePage() {
                     <th className="text-right">Erros</th>
                     <th className="text-right">Reviews</th>
                   </tr>
-                </thead>
+                </CabecalhoTabela>
                 <tbody>
                   {resumo.data.por_agente.map((a) => (
                     <tr key={a.agente} className="border-b last:border-0">
@@ -103,22 +107,22 @@ export default function ObservabilidadePage() {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </Tabela>
             )}
           </div>
         </>
       )}
 
       <div className="space-y-2">
-        <h2 className="font-semibold">Traces</h2>
+        <h2 className="font-display text-lg tracking-wide uppercase">Traces</h2>
         <div className="flex flex-wrap items-end gap-3 text-sm">
-          <label>
+          <label className="text-muted">
             Agente
             <select
               name="agente"
               value={agente}
               onChange={(e) => setAgente(e.target.value)}
-              className="mt-1 block rounded border border-zinc-300 px-2 py-1"
+              className={`mt-1 block px-2 py-1 ${classesCampo}`}
             >
               <option value="">Todos</option>
               {resumo.data?.por_agente.map((a) => (
@@ -128,13 +132,13 @@ export default function ObservabilidadePage() {
               ))}
             </select>
           </label>
-          <label>
+          <label className="text-muted">
             Status
             <select
               name="status"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="mt-1 block rounded border border-zinc-300 px-2 py-1"
+              className={`mt-1 block px-2 py-1 ${classesCampo}`}
             >
               <option value="">Todos</option>
               <option value="ok">ok</option>
@@ -160,8 +164,8 @@ export default function ObservabilidadePage() {
           <Vazio>Nenhum trace com esses filtros.</Vazio>
         )}
         {traces.isSuccess && traces.data.items.length > 0 && (
-          <table className="w-full text-left text-sm" data-testid="tabela-traces">
-            <thead className="border-b text-xs text-zinc-500 uppercase">
+          <Tabela data-testid="tabela-traces">
+            <CabecalhoTabela>
               <tr>
                 <th className="py-2">Quando</th>
                 <th>Agente</th>
@@ -172,7 +176,7 @@ export default function ObservabilidadePage() {
                 <th>Nota humana</th>
                 <th>Langfuse</th>
               </tr>
-            </thead>
+            </CabecalhoTabela>
             <tbody>
               {traces.data.items.map((t) => (
                 <tr key={t.id} className="border-b last:border-0" data-trace={t.id}>
@@ -211,7 +215,7 @@ export default function ObservabilidadePage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </Tabela>
         )}
       </div>
     </section>

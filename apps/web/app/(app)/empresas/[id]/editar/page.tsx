@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 
 import { EmpresaForm } from "@/components/empresas/EmpresaForm";
+import { TituloPagina } from "@/components/ui/TituloPagina";
 import { Carregando, Erro } from "@/components/ui/Estado";
 import { atualizarEmpresa, obterEmpresa } from "@/lib/api/companies";
 
@@ -17,7 +18,7 @@ export default function EditarEmpresaPage() {
   if (empresa.isError) return <Erro texto="Empresa não encontrada." />;
   return (
     <section className="space-y-4">
-      <h1 className="text-xl font-semibold">Editar {empresa.data.nome}</h1>
+      <TituloPagina>Editar {empresa.data.nome}</TituloPagina>
       <EmpresaForm
         inicial={empresa.data}
         rotuloSalvar="Salvar alterações"

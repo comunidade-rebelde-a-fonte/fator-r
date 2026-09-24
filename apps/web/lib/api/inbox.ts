@@ -1,5 +1,5 @@
 import { API_URL, ApiError, apiFetch } from "@/lib/api";
-import type { DocumentoList, DocumentoOut } from "./types";
+import type { CadastroPeloExtratoOut, CompanyIn, DocumentoList, DocumentoOut } from "./types";
 
 export const listarDocumentos = (status?: string) =>
   apiFetch<DocumentoList>(`/inbox?limit=200${status ? `&status=${status}` : ""}`);
@@ -33,4 +33,11 @@ export const rejeitarDocumento = (id: string, motivo: string) =>
   apiFetch<DocumentoOut>(`/inbox/${id}/reject`, {
     method: "POST",
     body: JSON.stringify({ motivo }),
+  });
+
+/** Cadastra a empresa do extrato e vincula o documento numa chamada só (M8). */
+export const cadastrarEmpresaPeloExtrato = (id: string, dados: CompanyIn) =>
+  apiFetch<CadastroPeloExtratoOut>(`/inbox/${id}/cadastrar-empresa`, {
+    method: "POST",
+    body: JSON.stringify(dados),
   });

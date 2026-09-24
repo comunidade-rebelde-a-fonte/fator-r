@@ -6,7 +6,11 @@ import { useState, type FormEvent } from "react";
 
 import { StatusTraceBadge } from "@/components/observabilidade/StatusTraceBadge";
 import { Badge } from "@/components/ui/Badge";
+import { Botao, classesBotao } from "@/components/ui/Botao";
+import { classesCampo } from "@/components/ui/Campo";
 import { Carregando, Erro, Vazio } from "@/components/ui/Estado";
+import { CabecalhoTabela, Tabela } from "@/components/ui/Tabela";
+import { TituloPagina } from "@/components/ui/TituloPagina";
 import { ApiError } from "@/lib/api";
 import { avaliarTrace, obterTrace } from "@/lib/api/observability";
 import type { NotaHumanaIn } from "@/lib/api/types";
@@ -14,7 +18,7 @@ import { formatarPercentual } from "@/lib/format";
 
 function Json({ titulo, valor }: { titulo: string; valor: unknown }) {
   return (
-    <details className="rounded border border-zinc-200 p-2 text-sm" open>
+    <details className="border-line bg-panel rounded-[10px] border p-2 text-sm" open>
       <summary className="cursor-pointer font-medium">{titulo}</summary>
       <pre className="mt-2 overflow-x-auto text-xs">{JSON.stringify(valor, null, 2)}</pre>
     </details>
@@ -53,8 +57,11 @@ function FormNota({ traceId }: { traceId: string }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-2 rounded border border-zinc-200 p-3 text-sm">
-      <h3 className="font-semibold">Nota humana</h3>
+    <form
+      onSubmit={onSubmit}
+      className="border-line bg-panel space-y-2 rounded-[10px] border p-3 text-sm"
+    >
+      <h3 className="font-display tracking-wide uppercase">Nota humana</h3>
       <div className="flex gap-4">
         {(["acerto", "parcial", "erro"] as const).map((n) => (
           <label key={n} className="flex items-center gap-1">
@@ -70,23 +77,21 @@ function FormNota({ traceId }: { traceId: string }) {
         ))}
       </div>
       <label className="block">
-        Comentário {nota === "erro" && <span className="text-red-700">(obrigatório)</span>}
+        Comentário {nota === "erro" && <span className="text-danger-soft">(obrigatório)</span>}
         <textarea
           name="comentario"
           value={comentario}
           onChange={(e) => setComentario(e.target.value)}
-          className="mt-1 block w-full rounded border border-zinc-300 px-2 py-1"
+          className={`mt-1 block w-full px-2 py-1 ${classesCampo}`}
         />
       </label>
       {erro && (
-        <p role="alert" className="text-red-700">
+        <p role="alert" className="text-danger-soft">
           {erro}
         </p>
       )}
-      {salvo && <p className="text-emerald-700">Nota registrada.</p>}
-      <button type="submit" className="rounded bg-zinc-900 px-3 py-1.5 text-white">
-        Registrar nota
-      </button>
+      {salvo && <p className="text-ok">Nota registrada.</p>}
+      <Botao type="submit">Registrar nota</Botao>
     </form>
   );
 }
@@ -112,13 +117,13 @@ export default function TraceDetalhePage() {
     <section className="space-y-4">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-xl font-semibold">
+          <TituloPagina>
             Trace {d.trace.agente} <StatusTraceBadge status={d.trace.status} />
-          </h1>
-          <p className="font-mono text-xs text-zinc-500" data-testid="trace-id">
+          </TituloPagina>
+          <p className="text-muted mt-2 font-mono text-xs" data-testid="trace-id">
             {d.trace.id}
           </p>
-          <p className="text-sm text-zinc-600">
+          <p className="text-muted text-sm">
             Gatilho: {d.trace.gatilho} · Confiança: {formatarPercentual(d.trace.confianca)} ·
             Latência: {d.trace.latencia_ms ?? "—"} ms · Langfuse: {d.trace.langfuse_sync}
           </p>
@@ -127,7 +132,7 @@ export default function TraceDetalhePage() {
           href={d.langfuse_url}
           target="_blank"
           rel="noreferrer"
-          className="rounded border px-3 py-1.5 text-sm"
+          className={classesBotao("fantasma")}
           data-testid="abrir-langfuse"
         >
           Abrir no Langfuse
@@ -135,7 +140,7 @@ export default function TraceDetalhePage() {
       </div>
 
       <div>
-        <h2 className="mb-2 font-semibold">Spans</h2>
+        <h2 className="font-display mb-2 text-lg tracking-wide uppercase">Spans</h2>
         {d.spans_indisponiveis ? (
           <Vazio>
             Spans indisponíveis: o Langfuse não respondeu. O resumo local continua valendo.
@@ -143,8 +148,8 @@ export default function TraceDetalhePage() {
         ) : d.spans.length === 0 ? (
           <Vazio>Os spans ainda estão sendo processados pelo Langfuse.</Vazio>
         ) : (
-          <table className="w-full text-left text-sm" data-testid="timeline-spans">
-            <thead className="border-b text-xs text-zinc-500 uppercase">
+          <Tabela data-testid="timeline-spans">
+            <CabecalhoTabela>
               <tr>
                 <th className="py-2">Span</th>
                 <th>Tipo</th>
@@ -153,7 +158,7 @@ export default function TraceDetalhePage() {
                 <th>Nível</th>
                 <th>Modelo</th>
               </tr>
-            </thead>
+            </CabecalhoTabela>
             <tbody>
               {d.spans.map((s) => (
                 <tr key={s.id} className="border-b last:border-0" data-span={s.nome}>
@@ -170,7 +175,7 @@ export default function TraceDetalhePage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </Tabela>
         )}
       </div>
 
@@ -181,19 +186,19 @@ export default function TraceDetalhePage() {
       </div>
 
       <div>
-        <h2 className="mb-2 font-semibold">Nota ouro</h2>
+        <h2 className="font-display mb-2 text-lg tracking-wide uppercase">Nota ouro</h2>
         {d.evals_ouro.length === 0 ? (
           <Vazio>Sem avaliação ouro para este trace.</Vazio>
         ) : (
-          <table className="w-full text-left text-sm" data-testid="evals-ouro">
-            <thead className="border-b text-xs text-zinc-500 uppercase">
+          <Tabela data-testid="evals-ouro">
+            <CabecalhoTabela>
               <tr>
                 <th className="py-2">Campo</th>
                 <th>Esperado</th>
                 <th>Obtido</th>
                 <th>Resultado</th>
               </tr>
-            </thead>
+            </CabecalhoTabela>
             <tbody>
               {d.evals_ouro.map((e) => (
                 <tr key={e.campo} className="border-b last:border-0">
@@ -210,23 +215,23 @@ export default function TraceDetalhePage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </Tabela>
         )}
       </div>
 
       <div className="grid gap-3 md:grid-cols-2">
         <FormNota traceId={d.trace.id} />
         <div className="space-y-2 text-sm" data-testid="evals-humanas">
-          <h3 className="font-semibold">Notas registradas</h3>
+          <h3 className="font-display tracking-wide uppercase">Notas registradas</h3>
           {d.evals_humanas.length === 0 && <Vazio>Nenhuma nota ainda.</Vazio>}
           {d.evals_humanas.map((h) => (
-            <div key={h.id} className="rounded border border-zinc-200 p-2">
+            <div key={h.id} className="border-line bg-panel rounded-[10px] border p-2">
               <Badge
                 cor={h.nota === "acerto" ? "verde" : h.nota === "erro" ? "vermelho" : "amarelo"}
               >
                 {h.nota}
               </Badge>{" "}
-              <span className="text-xs text-zinc-500">
+              <span className="text-muted text-xs">
                 {new Date(h.criado_em).toLocaleString("pt-BR")}
               </span>
               {h.comentario && <p className="mt-1">{h.comentario}</p>}

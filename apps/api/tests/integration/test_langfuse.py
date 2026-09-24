@@ -256,3 +256,42 @@ async def test_chamada_ao_claude_vira_generation_aninhada(langfuse_real: ExportS
     geracao = next(o for o in observacoes if o.get("type") == "GENERATION")
     assert geracao["parentObservationId"] == plan["id"]
     assert geracao["traceId"] == trace_id
+
+
+async def test_cadastro_pelo_extrato_no_langfuse(
+    client: httpx.AsyncClient, langfuse_real: ExportStatus
+) -> None:
+    """M8 (AT-011): mesmo trace_id, gatilho próprio, spans tool/decide/render e CNPJ mascarado.
+
+    A prova é a API pública do Langfuse, não a flag langfuse_sync: o SDK v4 guarda um recurso por
+    public_key, então só o primeiro cliente do processo recebe o ExportStatus do fixture.
+    """
+    u = await criar_escritorio_com_usuario()
+    await login(client, u)
+    extrato = (ROOT / "apps/api/fixtures/pgdas/txt_padrao/documento.txt").read_bytes()
+    doc = (
+        await client.post("/inbox/pgdas", files={"arquivo": ("extrato.txt", extrato, "text/plain")})
+    ).json()
+    resposta = await client.post(
+        f"/inbox/{doc['id']}/cadastrar-empresa",
+        json={
+            "nome": "CLINICA EXEMPLO LTDA",
+            "cnpj": "11.222.333/0001-81",
+            "sujeita_fator_r": True,
+        },
+    )
+    assert resposta.status_code == 201, resposta.text
+    trace_id = resposta.json()["documento"]["trace_id"]
+    await _sync(langfuse_real)
+
+    consulta = LangfuseConsulta(_settings())
+    observacoes = await esperar(lambda: consulta.observacoes(trace_id), lambda obs: len(obs) >= 4)
+    assert {"parser_pgdas", "tool", "decide", "render"} <= {o["name"] for o in observacoes}
+    assert all(o["traceId"] == trace_id for o in observacoes)
+    raiz = next(o for o in observacoes if o["name"] == "parser_pgdas")
+    assert {"parser_pgdas", "cadastro_pelo_extrato", f"firm:{u.firm_id}"} <= set(
+        raiz.get("tags") or []
+    )
+    bruto = json.dumps(observacoes)
+    assert "11222333000181" not in bruto
+    assert "11.222.333/0001-81" not in bruto

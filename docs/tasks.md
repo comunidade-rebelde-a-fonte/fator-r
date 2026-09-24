@@ -262,6 +262,34 @@ Cada marco só fecha quando todos os itens de **Aceite** passam.
 
 ---
 
+## M8 — Cadastro de empresa pelo extrato
+
+Pedido do usuário em 2026-09-22. Especificação, relatório e SHIPPED em `.claude/sdd/archive/CADASTRO_EMPRESA_PELO_EXTRATO/`. Registro de decisões em `docs/plan.md` §13.
+
+- [x] **T-801** Parser: `Identificacao` (nome empresarial + sugestão de `sujeita_fator_r` pela linha do fator r), PA no formato de intervalo (`DD/MM/AAAA a DD/MM/AAAA`, só dentro do mesmo mês), anexo lido primeiro de linha estruturada, `PARSER_VERSION 2026.09.2`. Nome e sugestão fora da confiança e da nota ouro. Testes unitários. **Dep.** T-507
+- [x] **T-802** Fixtures `pdf_declaratorio_*` (4 PDFs com CNPJ fictício) com `expected.json` verdadeiro e `lacunas_conhecidas` (RBT12, FS12 e DAS → T-504); `test_fixtures.py`, `parser_experiment.py` e README das fixtures. **Dep.** T-801, T-508
+- [x] **T-803** `companies.adicionar` (sem commit) + `parser_pgdas.sugestao_cadastro` + `cadastrar_e_vincular` (pré-checagens fora do trace; cria empresa, vincula e grava decisão numa transação só, com `gatilho=cadastro_pelo_extrato`), testes do agente. **Dep.** T-801, T-512
+- [x] **T-804** API: `sugestao_cadastro` no `DocumentoOut` e `POST /inbox/{id}/cadastrar-empresa` (201/404/409/422 com `detail.codigo`), testes de API e de isolamento, `make api-types`. **Dep.** T-803
+- [x] **T-805** Web: `EmpresaForm` (valores iniciais parciais, CNPJ só leitura, Fator R como Sim/Não) + bloco "Cadastrar e vincular" no resultado do upload e no detalhe do documento, com 409 → "vincular à empresa já cadastrada". **Dep.** T-804, T-514
+- [x] **T-806** Integração com o Langfuse (`-m langfuse`) e E2E `cadastro-pelo-extrato.spec.ts`. **Dep.** T-805
+- [x] **T-807** Documentação: PRD §7.6 e Registro de decisões. **Dep.** T-801..T-806
+- [x] **T-808** Lançar os 12 meses anteriores do extrato (receita e folha total declarada) quando as tabelas conferem com RBT12 e FS12; parser lê RBT12, "Total FS12" e data de abertura no layout declaratório (`2026.09.3`); início de atividade pré-preenchido no cadastro. Altera a §3.8 (Registro de decisões 2026-09-22). **Dep.** T-803
+- [x] **T-809** Carteira: coluna "Aumento de folha por mês" com cada valor rotulado ("+ R$ X para chegar a 28% (Anexo III)" e "+ R$ Y para a meta de N%"; "já atinge" / "já na meta" quando não falta nada); `/portfolio` passa a devolver `meta_operacional` por linha; espaçamento entre colunas. Pedido do usuário no teste manual (2026-09-22). **Dep.** T-304
+- [x] **T-810** Grade mensal: nas linhas `origem=pgdas`, pró-labore, salários, CPP e FGTS viram uma célula "Folha declarada no PGDAS-D" (o extrato só informa o total), com "Detalhar folha" para abrir os quatro campos. Só tela; dado e cálculo inalterados. Pedido do usuário no teste manual (2026-09-22). **Dep.** T-109, T-808
+
+**Aceite M8** (AT-001 a AT-014 do DEFINE)
+
+*Marco M8 fechado em 2026-09-22 (`/workflow:ship`), com E2E 16/16 após T-809/T-810. Pendente fora do aceite: folha do mês do PA (escolha A/B).*
+- [x] Extrato de CNPJ desconhecido: cadastrar e vincular sem sair da tela; empresa criada, documento `linked` e receita do PA com `origem=pgdas` e folha zerada. *(E2E `cadastro-pelo-extrato.spec.ts` + `test_cadastro_cria_empresa_vincula_e_cria_receita_do_pa`)*
+- [x] Extrato de empresa já cadastrada continua vinculando sozinho (sem regressão). *(`test_pdf_declaratorio_de_empresa_ja_cadastrada_vincula_sozinho` + E2E §13.3)*
+- [x] Nenhuma escrita sem confirmação humana; CNPJ divergente, estado final e CNPJ duplicado são recusados sem gravar nada; duplicado devolve o `company_id`. *(`tests/api/test_inbox_cadastro.py`, inclusive a corrida no UNIQUE)*
+- [x] Isolamento: documento de outro escritório → 404, nada criado. *(`test_documento_de_outro_escritorio_da_404` + varredor `-k isolation`)*
+- [x] Os 4 PDFs declaratórios com PA, nome e sugestão corretos; nenhuma regressão nas 10 fixtures sintéticas. *(`tests/parsing`: 48 verdes; experimento `parser-2026.09.2` 91,1%)*
+- [x] Trace local e no Langfuse com o mesmo `trace_id`, `gatilho=cadastro_pelo_extrato` e spans `tool`, `decide` e `render`.
+- [x] Extrato com tabelas mensais lança os 12 meses anteriores só em competências vazias e só quando conferem com RBT12/FS12; FS12 calculada = FS12 declarada. *(`test_pdf_declaratorio_ponta_a_ponta`, `test_tabela_que_nao_soma_o_total_nao_e_gravada`, competência manual preservada em `test_pdf_declaratorio_de_empresa_ja_cadastrada_vincula_sozinho`)* *(`test_cadastro_pelo_extrato_no_langfuse`, CNPJ mascarado)*
+
+---
+
 ## Ordem sugerida e paralelismo
 
 ```

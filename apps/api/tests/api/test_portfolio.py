@@ -2,6 +2,7 @@ import statistics
 import time
 from collections.abc import Iterator
 from contextlib import contextmanager
+from decimal import Decimal
 from typing import Any
 
 import httpx
@@ -73,6 +74,9 @@ async def test_carteira_filtra_ordena_e_soma(client: httpx.AsyncClient) -> None:
     assert body["kpis"]["seguras"] == 1
     assert body["kpis"]["honorarios_pacotes"] == "300.00"
     assert body["kpis"]["economia_em_jogo"] == body["linhas"][0]["economia_12m"]
+    # A tela rotula o aumento de folha com a meta do escritório (não fixa 30% no front).
+    assert {Decimal(linha["meta_operacional"]) for linha in body["linhas"]} == {Decimal("0.30")}
+    assert Decimal(body["linhas"][1]["reforco_mensal_meta"]) == 0
 
 
 async def test_carteira_sem_n_mais_1(client: httpx.AsyncClient) -> None:

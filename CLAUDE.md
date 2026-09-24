@@ -58,7 +58,7 @@ Violar qualquer item abaixo **bloqueia o merge**, mesmo com testes verdes.
 5. **RBT12 = 0 → `dados_insuficientes`.** Nunca inventar anexo, alíquota ou economia.
 6. **FS12 só com remuneração com INSS**, mais CPP e FGTS recolhidos. Nunca aceitar como FS12 a distribuição de lucros, pró-labore sem INSS, PAT, VT, reembolso, NF de PJ ou verba indenizatória.
 7. **Política de CPP é única por escritório** e aparece no cálculo e na ficha. Nunca vira escolha por empresa ou por analista.
-8. **O extrato PGDAS-D nunca escreve campos de folha.** Pode criar só a **receita** (RPA), **na competência do próprio PA**, e só se a competência ainda não existir. Nunca sobrescreve movimento existente.
+8. **O extrato PGDAS-D só grava o que declarou, só em competência vazia e nunca sobrescreve.** Cria a **receita** (RPA) **na competência do próprio PA**. Se o extrato trouxer as tabelas mês a mês dos 12 meses anteriores ao PA, grava também esses meses, mas só quando a receita soma o RBT12 declarado e a folha soma a FS12 declarada (tolerância de centavos). A folha declarada vai **inteira** no campo salários, com pró-labore, CPP e FGTS zerados e observação de "total declarado no PGDAS-D" — nunca se inventa a divisão. Atividade que o extrato diz não ter fator r entra com folha zero; sujeita ao fator r sem folha conferida não grava nenhum mês anterior. *(Alterada em 2026-09-22 por decisão do usuário; ver Registro de decisões.)*
 9. **Confiança < limiar do escritório ou CNPJ não encontrado → `needs_review`.** Sem escrita automática.
 10. **Sem trace, não há decisão.** Toda decisão de agente é gravada via `record_decision(run, ...)` dentro de `tracer.run(...)`; o banco exige `trace_id NOT NULL`.
 11. **`corrigir` só com simulação persistida no trace.** Sem `simulation_id`, o `decide` rejeita.
@@ -306,4 +306,4 @@ Se a decisão alterar regra do PRD, o PRD também é atualizado na mesma entrega
 - Próxima tarefa: primeira `[ ]` em `docs/tasks.md` com as Dep. `[x]`.
 - Na dúvida sobre regra de domínio: PRD §5 e §7 → Plano §5 → **perguntar**.
 - Na dúvida sobre escopo: PRD §2.1, §3.1 e §10 → este arquivo, §2 → **perguntar**.
-- Nunca: cálculo no LLM · folha a partir do extrato · decisão sem trace · consulta sem `firm_id` · commit sem pedido.
+- Nunca: cálculo no LLM · folha do extrato fora da regra da §3.8 (só total declarado e conferido, em competência vazia) · decisão sem trace · consulta sem `firm_id` · commit sem pedido.

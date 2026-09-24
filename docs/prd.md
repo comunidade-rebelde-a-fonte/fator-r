@@ -3,11 +3,13 @@ PRD — Plataforma Fator R
 Produto: monitoramento de Fator R e apoio à consultoria tributária para escritórios de contabilidade
 Documento: Product Requirements Document
 Status: rascunho para alinhamento
-Versão: 0.2
-Data: 2026-09-17
+Versão: 0.3
+Data: 2026-09-22
 Acesso na v1: somente o contador (usuário do escritório)
 
-Nota da v0.2: corrigida a §7.6 (RPA grava na competência do próprio PA). Demais decisões de implementação que complementam este PRD estão em docs/plan.md §2.2 e no Registro de decisões (docs/plan.md §13).
+Nota da v0.2: corrigida a §7.6 (RPA grava na competência do próprio PA).
+
+Nota da v0.3: §7.6 ganha o cadastro de empresa a partir do extrato (M8), com confirmação do contador, a leitura do PA no formato de intervalo e o lançamento dos 12 meses anteriores (receita e folha declaradas) quando o extrato traz as tabelas mensais. Demais decisões de implementação que complementam este PRD estão em docs/plan.md §2.2 e no Registro de decisões (docs/plan.md §13).
 
 1. Resumo
 
@@ -227,7 +229,9 @@ Fluxo:
 
 Contador envia o arquivo.
 
-Parser extrai, com confiança por documento: CNPJ, PA, RBT12, RPA, FS12, Fator R, valor do DAS, anexo se citado.
+Parser extrai, com confiança por documento: CNPJ, PA, RBT12, RPA, FS12, Fator R, valor do DAS, anexo se citado. O PA pode vir como mês/ano (09/2026) ou como intervalo dentro de um único mês (01/08/2026 a 31/08/2026); intervalo que atravessa meses não vira PA.
+
+Para cadastro, o parser também lê o nome empresarial e sugere se a atividade é sujeita ao Fator R (fator r numérico → sim; "não se aplica" → não; sem indício → sem sugestão). Esses dados não entram na confiança nem na nota ouro.
 
 Tentativa de vínculo pelo CNPJ da carteira.
 
@@ -238,6 +242,10 @@ Status: received \| parsed \| needs_review \| linked \| rejected.
 Confiança < limiar (sugerido 0,40) ou CNPJ não encontrado → needs_review. Nenhuma escrita automática de folha.
 
 Se vinculado e houver RPA, pode criar movimento de receita na competência do próprio PA (o RPA é a receita do período de apuração; ex.: PA 09/2026 → competência 2026-09) somente se a competência ainda não existir.
+
+Se o extrato trouxer as tabelas de receitas e de folha de salários dos 12 meses anteriores ao PA, esses meses também são lançados (origem pgdas), desde que a soma das receitas bata com o RBT12 declarado e a soma da folha bata com a FS12 declarada. A folha entra como o total declarado no PGDAS-D, sem divisão entre pró-labore, salários, CPP e FGTS, e por isso a política de CPP do escritório não altera esses meses. Atividade sem fator r entra com folha zero. Nada é lançado em competência que já tenha lançamento. A data de abertura do CNPJ pré-preenche o início de atividade no cadastro pelo extrato.
+
+CNPJ válido que não está na carteira: o documento continua em needs_review, e o contador pode cadastrar a empresa a partir do extrato, com o formulário pré-preenchido (CNPJ travado, nome e enquadramento editáveis). A empresa, o vínculo e a receita do PA só são gravados quando o contador confirma; nada é criado automaticamente. Se o CNPJ tiver sido cadastrado por outra pessoa nesse meio-tempo, o sistema oferece vincular à empresa existente.
 
 O parser é heurístico. Erro de extração é esperado; por isso a observabilidade é requisito, não extra.
 

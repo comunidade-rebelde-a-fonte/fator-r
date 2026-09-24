@@ -6,7 +6,11 @@ import { useState } from "react";
 
 import { PacoteBadge } from "@/components/empresas/Badges";
 import { SemaforoBadge } from "@/components/fator-r/SemaforoBadge";
+import { classesCampo } from "@/components/ui/Campo";
 import { Carregando, Erro, Vazio } from "@/components/ui/Estado";
+import { Painel } from "@/components/ui/Painel";
+import { CabecalhoTabela, Tabela } from "@/components/ui/Tabela";
+import { TituloPagina } from "@/components/ui/TituloPagina";
 import { obterCarteira } from "@/lib/api/portfolio";
 import type { CarteiraOut } from "@/lib/api/types";
 import {
@@ -18,12 +22,12 @@ import {
 
 function Kpi({ titulo, valor, testid }: { titulo: string; valor: string; testid: string }) {
   return (
-    <div className="rounded border border-zinc-200 p-3">
-      <div className="text-xs text-zinc-500">{titulo}</div>
-      <div className="mt-1 text-xl font-semibold" data-testid={testid}>
+    <Painel className="p-3">
+      <div className="text-muted text-[11px] tracking-[.1em] uppercase">{titulo}</div>
+      <div className="font-display mt-1 text-2xl" data-testid={testid}>
         {valor}
       </div>
-    </div>
+    </Painel>
   );
 }
 
@@ -54,19 +58,22 @@ export default function CarteiraPage() {
 
   return (
     <section className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Carteira</h1>
-        <label className="flex items-center gap-2 text-sm">
-          Período de apuração (PA)
-          <input
-            type="month"
-            name="pa"
-            value={pa}
-            onChange={(e) => e.target.value && setPa(e.target.value)}
-            className="rounded border border-zinc-300 px-2 py-1"
-          />
-        </label>
-      </div>
+      <TituloPagina
+        acoes={
+          <label className="text-muted flex items-center gap-2 text-sm">
+            Período de apuração (PA)
+            <input
+              type="month"
+              name="pa"
+              value={pa}
+              onChange={(e) => e.target.value && setPa(e.target.value)}
+              className={`${classesCampo} px-2 py-1`}
+            />
+          </label>
+        }
+      >
+        Carteira
+      </TituloPagina>
 
       {carteira.isPending && <Carregando />}
       {carteira.isError && (
@@ -82,8 +89,8 @@ export default function CarteiraPage() {
             </Vazio>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm" data-testid="tabela-carteira">
-                <thead className="border-b text-xs text-zinc-500 uppercase">
+              <Tabela data-testid="tabela-carteira">
+                <CabecalhoTabela>
                   <tr>
                     <th className="py-2">Ação sugerida</th>
                     <th>Empresa</th>
@@ -92,10 +99,10 @@ export default function CarteiraPage() {
                     <th>Anexo</th>
                     <th className="text-right">RBT12</th>
                     <th className="text-right">FS12</th>
-                    <th className="text-right">Reforço mensal (28% · meta)</th>
+                    <th className="text-right">Aumento de folha por mês</th>
                     <th className="text-right">Economia 12 meses</th>
                   </tr>
-                </thead>
+                </CabecalhoTabela>
                 <tbody>
                   {carteira.data.linhas.map((l) => (
                     <tr
@@ -108,12 +115,12 @@ export default function CarteiraPage() {
                         <Link href={`/empresas/${l.company_id}`} className="hover:underline">
                           {l.nome}
                         </Link>
-                        <div className="flex items-center gap-2 text-xs text-zinc-500">
+                        <div className="text-muted flex items-center gap-2 text-xs">
                           <span className="font-mono">{l.cnpj_formatado}</span>
                           <PacoteBadge pacote={l.pacote} />
                         </div>
                         {l.meses_faltantes.length > 0 && (
-                          <div className="text-xs text-red-700">
+                          <div className="text-danger-soft text-xs">
                             Faltam: {l.meses_faltantes.map(rotuloCompetencia).join(", ")}
                           </div>
                         )}
@@ -125,19 +132,54 @@ export default function CarteiraPage() {
                       <td>{l.anexo ?? "—"}</td>
                       <td className="text-right">{formatarReais(l.rbt12)}</td>
                       <td className="text-right">{formatarReais(l.fs12)}</td>
-                      <td className="text-right whitespace-nowrap">
-                        {formatarReais(l.reforco_mensal_28)} ·{" "}
-                        {formatarReais(l.reforco_mensal_meta)}
+                      <td className="text-right" data-testid="aumento-folha">
+                        <AumentoDeFolha
+                          ate28={l.reforco_mensal_28}
+                          ateMeta={l.reforco_mensal_meta}
+                          meta={l.meta_operacional}
+                        />
                       </td>
                       <td className="text-right">{formatarReais(l.economia_12m)}</td>
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </Tabela>
             </div>
           )}
         </>
       )}
     </section>
+  );
+}
+
+/** Quanto a folha mensal precisa subir: valores já calculados pelo motor, aqui só rotulados. */
+function AumentoDeFolha({
+  ate28,
+  ateMeta,
+  meta,
+}: {
+  ate28: string | null;
+  ateMeta: string | null;
+  meta: string;
+}) {
+  if (ate28 === null || ateMeta === null) return <span className="text-muted">—</span>;
+  const rotuloMeta = `meta de ${formatarPercentual(meta)}`;
+  const precisa28 = Number(ate28) > 0;
+  const precisaMeta = Number(ateMeta) > 0;
+  if (!precisaMeta) return <span className="text-ok">já na {rotuloMeta}</span>;
+  return (
+    <div className="space-y-0.5 whitespace-nowrap">
+      {precisa28 ? (
+        <div>
+          <strong>+ {formatarReais(ate28)}</strong>{" "}
+          <span className="text-muted text-xs">para chegar a 28% (Anexo III)</span>
+        </div>
+      ) : (
+        <div className="text-ok text-xs">já atinge 28% (Anexo III)</div>
+      )}
+      <div>
+        + {formatarReais(ateMeta)} <span className="text-muted text-xs">para a {rotuloMeta}</span>
+      </div>
+    </div>
   );
 }

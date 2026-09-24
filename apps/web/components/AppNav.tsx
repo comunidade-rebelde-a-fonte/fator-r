@@ -14,7 +14,7 @@ const ITENS = [
 export function AppNav() {
   const pathname = usePathname();
   return (
-    <nav aria-label="Navegação principal" className="flex gap-1">
+    <nav aria-label="Navegação principal" className="flex h-full gap-1">
       {ITENS.map((item) => {
         const ativo = pathname.startsWith(item.href);
         return (
@@ -22,8 +22,8 @@ export function AppNav() {
             key={item.href}
             href={item.href}
             aria-current={ativo ? "page" : undefined}
-            className={`rounded px-3 py-1.5 text-sm ${
-              ativo ? "bg-zinc-900 text-white" : "text-zinc-700 hover:bg-zinc-100"
+            className={`flex items-center border-b-2 px-3 text-sm transition-colors ${
+              ativo ? "border-accent text-fg" : "text-muted hover:text-fg border-transparent"
             }`}
           >
             {item.rotulo}
